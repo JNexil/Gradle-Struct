@@ -14,7 +14,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group 'su.jfdev.gradle.service'
-version '0.1-alpha'
+version '0.1.1-alpha'
 
 repositories {
     mavenCentral()
@@ -38,7 +38,7 @@ bintray {
         vcsUrl = 'https://github.com/Jamefrus/ServicesGradle.git'
         version {
             name = project.version
-            desc = 'Initial Version'
+            desc = 'add META-INF/gradle-plugins/... (plugin implementation file)'
             released = new Date()
             vcsTag = project.version
         }
