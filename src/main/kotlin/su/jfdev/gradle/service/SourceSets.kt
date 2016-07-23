@@ -59,14 +59,14 @@ class SourceSets(val project: Project) {
         }
 
         private fun optional(vararg scopes: String) = scopes.forEach {
-            val config = makeConfig(it)
+            val config = makeConfig(it, name)
             if (!enabled && whenDisabled != null) {
-                val disabledConfig = configurations.findByName(whenDisabled) ?: return@forEach
+                val disabledConfig = makeConfig(it, whenDisabled)
                 config.extendsFrom(disabledConfig)
             }
         }
 
-        private fun makeConfig(scope: String): Configuration {
+        private fun makeConfig(scope: String, name: String): Configuration {
             val configName = makeConfigName(name, scope)
             return configurations.maybeCreate(configName)
         }
