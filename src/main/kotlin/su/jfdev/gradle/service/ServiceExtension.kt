@@ -7,7 +7,7 @@ import org.gradle.api.artifacts.dsl.*
 import org.gradle.api.tasks.*
 import java.util.*
 
-class ServiceExtension(val project: Project) {
+open class ServiceExtension(val project: Project) {
     var apiSources = true
     var specSources = true
     var default: String? = null
