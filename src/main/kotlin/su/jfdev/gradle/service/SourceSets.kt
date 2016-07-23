@@ -15,17 +15,17 @@ class SourceSets(val project: Project) {
             val under = ArrayList<String>()
             SourceSetEx("api",
                         child = "main",
-                        enabled = apiSources,
-                        whenDisabled = "main")
+                        whenDisabled = "main",
+                        enabled = apiSources)
             SourceSetEx("spec",
                         child = "test",
-                        enabled = specSources,
-                        addTo = under)
+                        whenDisabled = "test",
+                        enabled = specSources)
             for (sourceSet in services.sourceSets)
                 SourceSetEx(name = sourceSet,
                             parent = "main",
                             under = under,
-                            isImpl = true)
+                            dummy = "impl")
         }
     }
 
@@ -34,8 +34,8 @@ class SourceSets(val project: Project) {
                             val child: String? = null,
                             val whenDisabled: String? = null,
                             val enabled: Boolean = true,
-                            val isImpl: Boolean = false,
                             val under: List<String> = emptyList(),
+                            val dummy: String? = null,
                             addTo: MutableList<String>? = null) {
         init {
             addTo?.add(name)
@@ -63,6 +63,10 @@ class SourceSets(val project: Project) {
             if (!enabled && whenDisabled != null) {
                 val disabledConfig = makeConfig(it, whenDisabled)
                 config.extendsFrom(disabledConfig)
+            }
+            if(dummy != null) {
+                val dummyConfig = makeConfig(it, dummy)
+                config.extendsFrom(dummyConfig)
             }
         }
 
