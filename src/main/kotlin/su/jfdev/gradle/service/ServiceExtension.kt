@@ -1,27 +1,35 @@
 package su.jfdev.gradle.service
 
+import javafx.collections.*
+import javafx.collections.FXCollections.*
 import org.codehaus.groovy.runtime.*
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.dsl.*
 import org.gradle.api.tasks.*
-import java.util.*
 
 open class ServiceExtension(val project: Project) {
+    val sourceSets = project.find("sourceSets") as SourceSetContainer
+    val dependHandler: DependencyHandler get() = project.dependencies
     var apiSources = true
     var specSources = true
     var default: String? = null
-    val services = ImplementationMap()
-    val dependHandler: DependencyHandler get() = project.dependencies
 
-    class ImplementationMap {
-        private val map = HashMap<String, HashMap<String, String>>()
-        @JvmName("getAt")
-        operator fun get(implementation: String): MutableMap<String, String> = map.getOrPut(implementation){
-            HashMap<String, String>()
-        }
-
-        val sourceSets: Collection<String> get() = map.keys
+    val services: MutableMap<String, Map<String, String>> = observableHashMap<String, Map<String, String>>().apply {
+        addListener(MapChangeListener {
+            val add = it.wasAdded()
+            val remove = it.wasRemoved()
+            when {
+                remove && add -> Unit
+                remove        -> {
+                    val serviceSet = sourceSets.findByName(it.key) ?: return@MapChangeListener
+                    sourceSets.remove(serviceSet)
+                }
+                add           -> {
+                    sourceSets.maybeCreate(it.key)
+                }
+            }
+        })
     }
 
     fun use(vararg names: String) = names.forEach { name ->

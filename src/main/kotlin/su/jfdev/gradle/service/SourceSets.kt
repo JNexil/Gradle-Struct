@@ -21,7 +21,7 @@ class SourceSets(val project: Project) {
                         child = "test",
                         whenDisabled = "test",
                         enabled = specSources)
-            for (sourceSet in services.sourceSets)
+            for (sourceSet in services.keys)
                 SourceSetEx(name = sourceSet,
                             parent = "main",
                             under = under,
