@@ -40,11 +40,8 @@ class SourceSets(val project: Project) {
         init {
             addTo?.add(name)
             val sourceSet = if (enabled) sourceSets.maybeCreate(name) else null
-            for (extract in extractors) {
-                if (enabled) sourceSet.extract() addEnabled extract
-                optional("compile", "runtime")
-            }
-
+            for (extract in extractors) if (enabled) sourceSet.extract().addEnabled(extract)
+            optional("compile", "runtime")
         }
 
         private infix fun Configuration?.addEnabled(extractor: (SourceSet) -> Configuration?) = this?.run {

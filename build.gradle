@@ -11,19 +11,22 @@ buildscript {
 plugins {
     id "com.jfrog.bintray" version "1.7"
 }
+
 apply plugin: 'kotlin'
 
 group 'su.jfdev.gradle.service'
 version '0.1.4-alpha'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile gradleApi()
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12',
+            "com.nhaarman:mockito-kotlin:0.5.1",
+            'com.netflix.nebula:nebula-test:latest.release'
 }
 
 bintray {
