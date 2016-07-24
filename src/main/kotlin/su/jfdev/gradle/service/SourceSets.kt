@@ -41,7 +41,7 @@ class SourceSets(val project: Project) {
             addTo?.add(name)
             val sourceSet = if (enabled) sourceSets.maybeCreate(name) else null
             for (extract in extractors) if (enabled) sourceSet.extract().addEnabled(extract)
-            optional("compile", "runtime")
+            project.optional()
         }
 
         private infix fun Configuration?.addEnabled(extractor: (SourceSet) -> Configuration?) = this?.run {
@@ -55,7 +55,7 @@ class SourceSets(val project: Project) {
             sourceSets.findByName(name)?.extract()?.extendsFrom(this)
         }
 
-        private fun optional(vararg scopes: String) = scopes.forEach {
+        private fun Project.optional() = scopes.forEach {
             val config = makeConfig(it, name)
             if (!enabled && whenDisabled != null) {
                 val disabledConfig = makeConfig(it, whenDisabled)
@@ -65,11 +65,6 @@ class SourceSets(val project: Project) {
                 val dummyConfig = makeConfig(it, dummy)
                 config.extendsFrom(dummyConfig)
             }
-        }
-
-        private fun makeConfig(scope: String, name: String): Configuration {
-            val configName = makeConfigName(name, scope)
-            return configurations.maybeCreate(configName)
         }
 
     }

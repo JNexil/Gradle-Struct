@@ -18,11 +18,18 @@ class SourceSetsSpec extends PluginProjectSpec {
         new SourceSets(project)
     }
 
-    def "should contains apiCompile, when api is disabled"() {
+    def "should contains apiCompile and other always"() {
         given:
         useDisabledConfiguration()
 
         expect:
         project.configurations.findByName("apiCompile") != null
+        project.configurations.findByName("apiRuntime") != null
+
+        project.configurations.findByName("specCompile") != null
+        project.configurations.findByName("specRuntime") != null
+
+        project.configurations.findByName("implCompile") != null
+        project.configurations.findByName("implRuntime") != null
     }
 }
