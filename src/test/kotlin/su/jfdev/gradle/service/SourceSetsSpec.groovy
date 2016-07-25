@@ -15,7 +15,6 @@ class SourceSetsSpec extends PluginProjectSpec {
         project.services {
             apiSources = false
         }
-        new SourceSets(project)
     }
 
     def "should contains apiCompile and other always"() {

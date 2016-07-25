@@ -9,7 +9,9 @@ import org.gradle.api.artifacts.dsl.*
 import org.gradle.api.tasks.*
 
 open class ServiceExtension(val project: Project) {
-    val sourceSets = project.find("sourceSets") as SourceSetContainer
+    val sourceSets: SourceSetContainer by lazy {
+        project.get<SourceSetContainer>("sourceSets")
+    }
     val dependHandler: DependencyHandler get() = project.dependencies
     var apiSources = true
     var specSources = true

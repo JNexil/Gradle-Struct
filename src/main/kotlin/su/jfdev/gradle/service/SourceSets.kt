@@ -7,7 +7,7 @@ import java.util.*
 
 class SourceSets(val project: Project) {
     val extractors = project.extractors
-    val sourceSets: SourceSetContainer get() = project.find("sourceSets") as SourceSetContainer
+    val sourceSets: SourceSetContainer = project["sourceSets"]
     val configurations: ConfigurationContainer get() = project.configurations
 
     init {
