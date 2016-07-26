@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.tasks.*
 import java.util.*
 
+//TODO: Full evaluate-time realisation
 class SourceSets(val project: Project) {
     val extractors = project.extractors
     val sourceSets: SourceSetContainer = project.sourceSets
@@ -44,19 +45,21 @@ class SourceSets(val project: Project) {
             project.optional()
         }
 
-        private infix fun Configuration?.addEnabled(extractor: (SourceSet) -> Configuration?) = this?.run {
+        private fun Configuration?.addEnabled(extractor: SourceSet?.() -> Configuration?) = this?.run {
             val toExtend = under + parent + child
             extend(extractor, *toExtend.toTypedArray())
         }
 
-        private fun Configuration.extend(extract: SourceSet.() -> Configuration?,
+        private fun Configuration.extend(extract: SourceSet?.() -> Configuration?,
                                          vararg under: String?) = under.forEach {
-            val name = it ?: return
-            sourceSets.findByName(name)?.extract()?.extendsFrom(this)
+            if(it != null) {
+                val configuration = sourceSets.findByName(it).extract()
+                configuration?.extendsFrom(this)
+            }
         }
 
         private fun Project.optional() = scopes.forEach {
-            val config = makeConfig(it, name)
+            val config = makeConfig(it, this@SourceSetEx.name)
             if (!enabled && whenDisabled != null) {
                 val disabledConfig = makeConfig(it, whenDisabled)
                 config.extendsFrom(disabledConfig)
