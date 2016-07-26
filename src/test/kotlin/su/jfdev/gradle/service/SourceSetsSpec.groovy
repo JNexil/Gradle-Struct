@@ -1,25 +1,11 @@
 package su.jfdev.gradle.service
 
-import nebula.test.PluginProjectSpec
-import spock.lang.Ignore
-
-class SourceSetsSpec extends PluginProjectSpec {
-
-    public static final String TEST_FILE = "sourceSetsTest.gradle"
-
-    String pluginName = "su.jfdev.gradle.service"
-
-    @Ignore useDisabledConfiguration(){
-        project.plugins.apply("java")
-        project.plugins.apply(ServicePlugin)
+class SourceSetsSpec extends ServicePluginSpec {
+    def "should contains apiCompile and other always"() {
+        given:
         project.services {
             apiSources = false
         }
-    }
-
-    def "should contains apiCompile and other always"() {
-        given:
-        useDisabledConfiguration()
 
         expect:
         project.configurations.findByName("apiCompile") != null

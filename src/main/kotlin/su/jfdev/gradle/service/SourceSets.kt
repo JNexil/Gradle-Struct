@@ -7,7 +7,7 @@ import java.util.*
 
 class SourceSets(val project: Project) {
     val extractors = project.extractors
-    val sourceSets: SourceSetContainer = project["sourceSets"]
+    val sourceSets: SourceSetContainer = project.sourceSets
     val configurations: ConfigurationContainer get() = project.configurations
 
     init {
@@ -21,7 +21,7 @@ class SourceSets(val project: Project) {
                         child = "test",
                         whenDisabled = "test",
                         enabled = specSources)
-            for (sourceSet in services.keys)
+            for (sourceSet in impl.keys)
                 SourceSetEx(name = sourceSet,
                             parent = "main",
                             under = under,
