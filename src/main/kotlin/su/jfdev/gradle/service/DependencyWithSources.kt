@@ -35,8 +35,6 @@ class DependencyWithSources(val project: Project,
                 = dependencies.project(mapOf("path" to path, "configuration" to conf))
 
         private fun Project.extractSourceOut(source: String)
-                = sourceSets.getByName(source).output.apply {
-            println("$source = ${this@extractSourceOut}")
-        }
+                = sourceSets.getByName(source).output
     }
 }

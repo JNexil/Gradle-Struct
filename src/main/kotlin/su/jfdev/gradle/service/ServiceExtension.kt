@@ -25,14 +25,12 @@ open class ServiceExtension(val project: Project) {
             val add = it.wasAdded()
             val remove = it.wasRemoved()
             when {
-                remove == add -> println("not changed ${it.key}")
+                remove == add -> Unit
                 remove        -> {
-                    println("remove ${it.key}")
                     val serviceSet = sourceSets.findByName(it.key) ?: return@MapChangeListener
                     sourceSets.remove(serviceSet)
                 }
                 add           -> {
-                    println("add ${it.key} in ${project}")
                     sourceSets.maybeCreate(it.key)
                 }
             }
