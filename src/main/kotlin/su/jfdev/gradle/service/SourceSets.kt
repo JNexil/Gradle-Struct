@@ -59,12 +59,13 @@ class SourceSets(val project: Project) {
         }
 
         private fun Project.optional() = scopes.forEach {
-            val config = makeConfig(it, this@SourceSetEx.name)
+            val sourceName = this@SourceSetEx.name
+            val config = makeConfig(it, sourceName)
             if (!enabled && whenDisabled != null) {
                 val disabledConfig = makeConfig(it, whenDisabled)
                 config.extendsFrom(disabledConfig)
             }
-            if(dummy != null) {
+            if(dummy != null && dummy != sourceName) {
                 val dummyConfig = makeConfig(it, dummy)
                 config.extendsFrom(dummyConfig)
             }
