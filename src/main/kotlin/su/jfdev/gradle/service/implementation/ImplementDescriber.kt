@@ -1,0 +1,41 @@
+package su.jfdev.gradle.service.implementation
+
+import groovy.lang.*
+import org.gradle.api.tasks.*
+import java.io.*
+import kotlin.collections.Map.*
+
+open class ImplementDescriber(val sourceSets: SourceSetContainer): GroovyObjectSupport() {
+
+    fun add(name: String, vararg arguments: Pair<String, String>)
+            = arguments.distinct().add(name)
+
+    override fun invokeMethod(name: String, args: Any?): Any? {
+        try {
+            val argumentArray = args as Array<*>
+            val argumentMap = argumentArray[0] as Map<*, *>
+            argumentMap
+                    .map { toStrings(it) }
+                    .distinct().add(name)
+            return null
+        } catch (e: Exception) {
+        }
+        return super.invokeMethod(name, args)
+    }
+
+    private fun toStrings(it: Entry<*, Any?>) = it.key.toString() to it.value.toString()
+
+    private fun Iterable<Pair<String, String>>.add(name: String) {
+        val resourcesDir = sourceSets.getByName(name).output.resourcesDir
+        val argumentGroups = groupBy { it.first }
+        for ((key, value) in argumentGroups) resourcesDir.resolve("META-INF/services/$key").apply {
+            createNewFile()
+            writeServices(value)
+        }
+    }
+
+    private fun File.writeServices(services: List<Pair<String, String>>) = writer().run {
+        for ((key, value) in services) appendln(value)
+    }
+
+}
