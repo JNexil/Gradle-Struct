@@ -11,7 +11,7 @@ class ParallelRequire(val receiver: Project, val target: Project) {
 
     fun service(vararg implementations: String) {
         sources("main")
-        implement(implementations)
+        implementation(*implementations)
         for (value in values()) value.additional()
     }
 
@@ -22,7 +22,7 @@ class ParallelRequire(val receiver: Project, val target: Project) {
         else                   -> sources(name)
     }
 
-    private fun implement(implementations: Array<out String>) = implementations.forEach { implementation ->
+    fun implementation(vararg implementations: String) = implementations.forEach { implementation ->
         sources(implementation, "impl")
     }
 
