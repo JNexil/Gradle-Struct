@@ -1,4 +1,4 @@
-package su.jfdev.gradle.service
+package su.jfdev.gradle.service.util
 
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
