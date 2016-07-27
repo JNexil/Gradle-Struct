@@ -1,24 +1,25 @@
 package su.jfdev.gradle.service.require
 
 import org.gradle.api.*
-import su.jfdev.gradle.service.*
+import su.jfdev.gradle.service.additional.*
+import su.jfdev.gradle.service.additional.AdditionalSources.*
 import su.jfdev.gradle.service.util.*
 
 class ParallelRequire(val receiver: Project, val target: Project) {
-    val services: ServiceExtension = receiver.extensions.findByType(ServiceExtension::class.java)
-    val targetServices: ServiceExtension = target.extensions.findByType(ServiceExtension::class.java)
+    val receiverAdditional = AdditionalDescriber[receiver]
+    val targetAdditional = AdditionalDescriber[target]
 
     fun service(vararg implementations: String) {
         sources("main")
-        sourcesWhen("api", "main") { apiSources }
-        sourcesWhen("spec", "test") { specSources }
         implement(implementations)
+        for (value in values()) value.additional()
     }
 
-    private inline fun sourcesWhen(sources: String, alternative: String, alt: ServiceExtension.() -> Boolean) = when {
-        targetServices.alt() -> Unit
-        services.alt()       -> sources(sources, alternative)
-        else                 -> sources(sources)
+    private fun AdditionalSources.additional() = when (this) {
+        impl                   -> Unit
+        !in targetAdditional   -> Unit
+        !in receiverAdditional -> sources(name, alternative!!)
+        else                   -> sources(name)
     }
 
     private fun implement(implementations: Array<out String>) = implementations.forEach { implementation ->
