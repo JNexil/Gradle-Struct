@@ -8,7 +8,7 @@ abstract class AdditionalContainer private constructor(val sourceSets: SourceSet
     abstract infix fun add(sources: String): SourceSet
     abstract infix fun remove(sources: String): Boolean
     abstract operator fun contains(sources: String): Boolean
-    abstract val isSingle: Boolean
+    abstract val isEmpty: Boolean
 
     protected fun create(sources: String): SourceSet = sourceSets.maybeCreate(sources)
     protected fun SourceSet.destroy() = sourceSets.remove(this)
@@ -32,7 +32,7 @@ abstract class AdditionalContainer private constructor(val sourceSets: SourceSet
 
             override fun iterator(): Iterator<SourceSet> = map.values.iterator()
 
-            override val isSingle: Boolean get() = false
+            override val isEmpty: Boolean get() = map.isEmpty()
         }
 
         fun single(sourceSets: SourceSetContainer) = object: AdditionalContainer(sourceSets) {
@@ -53,7 +53,7 @@ abstract class AdditionalContainer private constructor(val sourceSets: SourceSet
                     .mapNotNull { it.get() }
                     .iterator()
 
-            override val isSingle: Boolean get() = true
+            override val isEmpty: Boolean get() = reference.get() == null
         }
     }
 }
