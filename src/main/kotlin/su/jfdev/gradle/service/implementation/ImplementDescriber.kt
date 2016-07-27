@@ -1,12 +1,14 @@
 package su.jfdev.gradle.service.implementation
 
 import groovy.lang.*
+import org.gradle.api.*
 import org.gradle.api.tasks.*
+import su.jfdev.gradle.service.util.*
 import java.io.*
 import kotlin.collections.Map.*
 
 open class ImplementDescriber(val sourceSets: SourceSetContainer): GroovyObjectSupport() {
-    private var main: String? = null
+    var main: String? = null
     fun main(name: String) {
         main = name
     }
@@ -42,4 +44,7 @@ open class ImplementDescriber(val sourceSets: SourceSetContainer): GroovyObjectS
         for ((key, value) in services) appendln(value)
     }
 
+    companion object {
+        operator fun get(project: Project): ImplementDescriber = project.extension()
+    }
 }
