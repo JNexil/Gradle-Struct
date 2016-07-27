@@ -1,4 +1,4 @@
-package su.jfdev.gradle.service.describe
+package su.jfdev.gradle.service.additional
 
 import org.gradle.api.tasks.*
 import java.util.concurrent.*
