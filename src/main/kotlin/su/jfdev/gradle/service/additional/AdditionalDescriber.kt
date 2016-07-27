@@ -9,6 +9,8 @@ open class AdditionalDescriber(val project: Project) {
         it to it[project]
     })
 
+    operator fun contains(additional: AdditionalSources) = !get(additional).isEmpty
+
     operator fun get(additional: AdditionalSources): AdditionalContainer
             = additionalSources[additional]!!
 
