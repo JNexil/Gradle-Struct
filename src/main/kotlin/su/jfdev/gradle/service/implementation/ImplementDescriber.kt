@@ -6,6 +6,10 @@ import java.io.*
 import kotlin.collections.Map.*
 
 open class ImplementDescriber(val sourceSets: SourceSetContainer): GroovyObjectSupport() {
+    private var main: String? = null
+    fun main(name: String) {
+        main = name
+    }
 
     fun add(name: String, vararg arguments: Pair<String, String>)
             = arguments.distinct().add(name)
