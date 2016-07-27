@@ -18,8 +18,10 @@ open class AdditionalDescriber(val project: Project) {
         //TODO: setting sourceSets for extending
     }
 
-    fun api(alias: String) = set(api, alias)
-    fun spec(alias: String) = set(spec, alias)
+    @JvmOverloads fun api(alias: String = "api") = set(api, alias)
+    @JvmOverloads fun spec(alias: String = "spec") = set(spec, alias)
+
+    fun impl() = impl("impl")
     fun impl(vararg aliases: String) = aliases.forEach {
         set(impl, it)
     }
