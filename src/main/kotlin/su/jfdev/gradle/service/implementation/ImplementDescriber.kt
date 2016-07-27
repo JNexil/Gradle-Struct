@@ -47,4 +47,9 @@ open class ImplementDescriber(val sourceSets: SourceSetContainer): GroovyObjectS
     companion object {
         operator fun get(project: Project): ImplementDescriber = project.extension()
     }
+
+    @JvmName("getAt") fun getMethod(name: String) = AddMethod(name)
+    inner class AddMethod(val name: String) {
+        fun call(map: Map<String, String>) = map.toList().distinct().add(name)
+    }
 }
