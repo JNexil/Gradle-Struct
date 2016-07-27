@@ -5,7 +5,7 @@ import su.jfdev.gradle.service.implementation.*
 import su.jfdev.gradle.service.util.*
 
 open class ParallelRequireUser(val receiver: Project) {
-    val describer = ImplementDescriber[receiver]
+    val describer: ImplementDescriber by receiver.ext()
 
     fun services(vararg targets: String) = targets.forEach {
         service(it)
