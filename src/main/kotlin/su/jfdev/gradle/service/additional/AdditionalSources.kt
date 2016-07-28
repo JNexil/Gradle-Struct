@@ -12,12 +12,12 @@ enum class AdditionalSources(val repeatable: Boolean = false,
        ),
     spec(
                 alternative = "test",
-                downer =  mapOf("compile" to "test"),
-                upper =  mapOf("runtime" to "impl")
+                downer =  mapOf("compile" to "test")
         ),
     impl(
                 alternative = "impl",
                 repeatable = true,
+                downer = mapOf("runtime" to "impl"),
                 upper = mapOf("runtime" to "main")
         );
 
