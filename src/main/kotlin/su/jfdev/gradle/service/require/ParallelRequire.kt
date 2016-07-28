@@ -26,16 +26,14 @@ class ParallelRequire(val receiver: Project, val target: Project) {
         sources(implementation, "impl")
     }
 
-    fun sources(fromSet: String, toSet: String = fromSet) {
-        val dependency = pack(fromSet)
+    fun sources(fromSet: String, toSet: String = fromSet, scope: String = "compile") {
         val configuration = makeConfigName(toSet, scope)
+        val dependency = DependencyWithSources(target, fromSet, scope)
         receiver.dependencies.add(configuration, dependency)
+        receiver.logger.debug("Add sources: $configuration $dependency from $fromSet to $toSet by $scope")
     }
 
-    private fun pack(fromSet: String) = DependencyWithSources(target, fromSet)
-
     companion object {
-        const val scope = "compile"
         operator fun get(receiver: Project, name: String) = ParallelRequire(receiver, receiver.project(name))
     }
 }
