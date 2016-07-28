@@ -12,6 +12,14 @@ open class ImplementDescriber(val ext: ServiceExtension): GroovyObjectSupport() 
         main = name
     }
 
+    fun add(map: Map<String, Map<String, String>>) = map.toList().forEach {
+        add(it.first, it.second)
+    }
+
+
+    fun add(name: String, map: Map<String, String>)
+            = map.toList().distinct().add(name)
+
     fun add(name: String, vararg arguments: Pair<String, String>)
             = arguments.distinct().add(name)
 
