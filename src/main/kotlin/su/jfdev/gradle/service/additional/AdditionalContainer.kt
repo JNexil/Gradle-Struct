@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.*
 
 abstract class AdditionalContainer private constructor(val sourceSets: SourceSetContainer): Iterable<SourceSet> {
     abstract infix fun add(sources: String): SourceSet
-    abstract infix fun remove(sources: String): Boolean
+    abstract infix fun remove(sources: String)
     abstract operator fun contains(sources: String): Boolean
     abstract val isEmpty: Boolean
 
@@ -26,7 +26,9 @@ abstract class AdditionalContainer private constructor(val sourceSets: SourceSet
                 map[sources] = this
             }
 
-            override fun remove(sources: String) = map.remove(sources)?.destroy() != null
+            override fun remove(sources: String) {
+                map.remove(sources)?.destroy()
+            }
 
             override fun contains(sources: String) = map[sources] != null
 
@@ -42,10 +44,12 @@ abstract class AdditionalContainer private constructor(val sourceSets: SourceSet
                 reference.getAndSet(this)?.destroy()
             }
 
-            override fun remove(sources: String) = reference.get()?.run {
-                destroy()
-                name == sources && reference.compareAndSet(this, null)
-            } ?: false
+            override fun remove(sources: String) {
+                reference.get()?.run {
+                    destroy()
+                    name == sources && reference.compareAndSet(this, null)
+                }
+            }
 
             override fun contains(sources: String) = reference.get()?.name == sources
 
