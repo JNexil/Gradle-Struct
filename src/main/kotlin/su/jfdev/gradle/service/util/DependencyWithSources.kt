@@ -4,10 +4,10 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.internal.artifacts.*
 import org.gradle.api.tasks.*
-import su.jfdev.gradle.service.util.*
 
-class DependencyWithSources(val project: Project,
-                            val sources: String): ResolvableDependency, Dependency {
+data class DependencyWithSources(val project: Project,
+                                 val sources: String,
+                                 val configuration: String): ResolvableDependency, Dependency {
     val sourceOut: SourceSetOutput = project.sourceSets.getByName(sources).output
     val dependency: Dependency = project.run {
         val conf = makeConfigName(sources, configuration)
@@ -19,7 +19,7 @@ class DependencyWithSources(val project: Project,
     override fun getName(): String = project.name
     override fun getVersion(): String = project.version.toString()
 
-    override fun copy() = DependencyWithSources(project, sources)
+    override fun copy() = DependencyWithSources(project, sources, configuration)
 
     override fun contentEquals(other: Dependency) = other is DependencyWithSources
                                                     && other.project == project
@@ -29,9 +29,5 @@ class DependencyWithSources(val project: Project,
         if (dependency is ResolvableDependency) dependency.resolve(context)
         else project.logger.warn("Dependency $dependency is not resolvable")
         context.add(sourceOut)
-    }
-
-    companion object {
-        private const val configuration = "compile"
     }
 }
