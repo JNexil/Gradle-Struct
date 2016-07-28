@@ -1,7 +1,6 @@
 package su.jfdev.gradle.service
 
 import org.gradle.api.Project
-import spock.lang.Ignore
 import su.jfdev.gradle.service.util.DependencyWithSources
 
 import static su.jfdev.gradle.service.util.ConfigNameKt.makeConfigName
@@ -55,8 +54,7 @@ class ServiceUserSpec extends ServicePluginSpec {
         contains(false, "third")
     }
 
-    @Ignore
-    void contains(boolean expect = true, String... keys) {
+    private void contains(boolean expect = true, String... keys) {
         for (key in keys) for (scope in scopes) for (sources in ["api", "main", "impl"]) {
             def name = makeConfigName(sources, scope)
             def conf = userProject.configurations.findByName(name)
