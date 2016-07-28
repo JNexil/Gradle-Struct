@@ -18,7 +18,7 @@ open class AdditionalDescriber(val ext: ServiceExtension) {
             = additionalSources[additional]!!
 
     operator fun set(additional: AdditionalSources, alias: String) = get(additional).add(alias).apply {
-        ext.project.require(ext.project.name) {
+        ext.project.require(ext.project.path) {
             for (upper in additional.upper)
                 for (fromSet in replace(upper))
                     sources(fromSet, alias)
