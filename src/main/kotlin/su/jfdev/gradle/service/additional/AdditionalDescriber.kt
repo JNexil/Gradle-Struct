@@ -1,14 +1,14 @@
 package su.jfdev.gradle.service.additional
 
 import org.gradle.api.*
-import org.gradle.api.tasks.*
+import su.jfdev.gradle.service.*
 import su.jfdev.gradle.service.additional.AdditionalSources.*
 import su.jfdev.gradle.service.util.*
 import java.util.*
 
-open class AdditionalDescriber(val sourceSets: SourceSetContainer) {
+open class AdditionalDescriber(val ext: ServiceExtension) {
     private val additionalSources = EnumMap(AdditionalSources.values().associate {
-        it to it[sourceSets]
+        it to it[ext.sourceSets]
     })
 
     operator fun contains(additional: AdditionalSources) = !get(additional).isEmpty
@@ -29,6 +29,6 @@ open class AdditionalDescriber(val sourceSets: SourceSetContainer) {
     }
 
     companion object {
-        operator fun get(project: Project): AdditionalDescriber = project.extension()
+        operator fun get(project: Project): AdditionalDescriber = project.extension.describe
     }
 }

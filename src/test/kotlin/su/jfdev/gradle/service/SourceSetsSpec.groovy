@@ -3,8 +3,10 @@ package su.jfdev.gradle.service
 class SourceSetsSpec extends ServicePluginSpec {
     def "should contains apiCompile and other always"() {
         given:
-        project.services {
-            apiSources = false
+        project.describe {
+            api()
+            spec()
+            impl()
         }
 
         expect:

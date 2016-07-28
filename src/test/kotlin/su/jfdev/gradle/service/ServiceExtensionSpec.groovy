@@ -1,9 +1,10 @@
 package su.jfdev.gradle.service
 
 import spock.lang.Ignore
+import su.jfdev.gradle.service.util.DependencyWithSources
 
-import static su.jfdev.gradle.service.ConfigNameKt.makeConfigName
-import static su.jfdev.gradle.service.ConfigNameKt.scopes
+import static su.jfdev.gradle.service.util.ConfigNameKt.makeConfigName
+import static su.jfdev.gradle.service.util.ConfigNameKt.scopes
 
 class ServiceExtensionSpec extends ServicePluginSpec {
     def "should add dependency with def impl"() {
@@ -16,21 +17,28 @@ class ServiceExtensionSpec extends ServicePluginSpec {
         }
 
         ownerProject.services {
-            impl.first = [:]
-            impl.second = [:]
-            impl.third = [:]
-            main = "first"
+            describe {
+                api()
+                spec()
+                impl "first", "second", "third"
+            }
+
+            implementations {
+                first "": ""
+                second "": ""
+                third "": ""
+                main "first"
+            }
         }
 
         when:
-        userProject.services {
-            defRequire(ownerProject.path)
-            require(ownerProject.path, "second")
+        userProject.services.require {
+            service ownerProject.path
+            service ownerProject.path, "second"
         }
         then:
         contains("first", "second")
         contains(false, "third")
-
     }
 
     @Ignore
