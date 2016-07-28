@@ -17,24 +17,30 @@ class ServiceExtensionSpec extends ServicePluginSpec {
         }
 
         ownerProject.services {
+            implementations.main "first"
             describe {
                 api()
                 spec()
-                impl "first", "second", "third"
-            }
-
-            implementations {
-                first "": ""
-                second "": ""
-                third "": ""
-                main "first"
+                impl(
+                        first: [
+                                "interface": ["impl"]
+                        ],
+                        second: [
+                                "interface": ["impl"]
+                        ],
+                        third: [
+                                "interface": ["impl"]
+                        ]
+                )
             }
         }
 
         when:
-        userProject.services.require {
-            service ownerProject.path
-            service ownerProject.path, "second"
+        userProject.services {
+            require {
+                service ownerProject.path
+                service ownerProject.path, "second"
+            }
         }
         then:
         contains("first", "second")

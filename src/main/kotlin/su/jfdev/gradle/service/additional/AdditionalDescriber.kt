@@ -23,6 +23,11 @@ open class AdditionalDescriber(val ext: ServiceExtension) {
     @JvmOverloads fun api(alias: String = "api") = set(api, alias)
     @JvmOverloads fun spec(alias: String = "spec") = set(spec, alias)
 
+    fun impl(map: Map<String, Map<String, Iterable<String>>>) {
+        ext.implementations.add(map)
+        for ((key, value) in map) impl(key)
+    }
+
     fun impl() = impl("impl")
     fun impl(vararg aliases: String) = aliases.forEach {
         set(impl, it)

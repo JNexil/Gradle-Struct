@@ -14,7 +14,6 @@ open class ServiceExtension(val project: Project) {
     val require = ParallelRequireUser(this)
 
     fun require(closure: Closure<Any>) = closure.delegate(require)
-    fun implementations(closure: Closure<Any>) = closure.delegate(implementations)
     fun describe(closure: Closure<Any>) = closure.delegate(describe)
 
     private fun Closure<Any>.delegate(receiver: Any) {
