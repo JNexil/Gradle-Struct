@@ -6,7 +6,7 @@ import su.jfdev.gradle.service.util.DependencyWithSources
 import static su.jfdev.gradle.service.util.ConfigNameKt.makeConfigName
 import static su.jfdev.gradle.service.util.ConfigNameKt.scopes
 
-class ServiceExtensionSpec extends ServicePluginSpec {
+class ServiceUserSpec extends ServicePluginSpec {
     def "should add dependency with def impl"() {
         given:
         def userProject = addSubproject("user")

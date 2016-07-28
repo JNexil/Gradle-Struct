@@ -1,6 +1,6 @@
 package su.jfdev.gradle.service
 
-class SourceSetsSpec extends ServicePluginSpec {
+class DummySpec extends ServicePluginSpec {
     def "should contains apiCompile and other always"() {
         expect:
         project.configurations.findByName("apiCompile") != null
