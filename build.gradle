@@ -15,7 +15,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group 'su.jfdev.gradle.service'
-version '1.0.0a'
+version '1.0.1a'
 
 repositories {
     jcenter()
@@ -41,7 +41,7 @@ bintray {
         vcsUrl = 'https://github.com/Jamefrus/ServicesGradle.git'
         version {
             name = project.version
-            desc = 'Rewrite'
+            desc = 'Delete Guava'
             released = new Date()
             vcsTag = project.version
         }
