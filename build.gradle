@@ -42,7 +42,7 @@ bintray {
         vcsUrl = 'https://github.com/Jamefrus/ServicesGradle.git'
         version {
             name = project.version
-            desc = 'SNAPSHOT'
+            desc = 'Rewrite'
             released = new Date()
             vcsTag = project.version
         }
