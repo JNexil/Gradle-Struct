@@ -4,6 +4,11 @@ import nebula.test.IntegrationSpec
 
 class ServiceFileSpec extends IntegrationSpec {
     String text = """
+buildscript {
+    dependencies {
+        classpath files('../../../../build/classes/main')
+    }
+}
 ${applyPlugin(ServicePlugin.class)}
 services {
     describe {

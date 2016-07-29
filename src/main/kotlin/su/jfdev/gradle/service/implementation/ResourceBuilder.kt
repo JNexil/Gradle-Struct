@@ -16,11 +16,12 @@ private fun File.writeServices(services: Map<String, Iterable<String>>) {
 }
 
 private fun File.writeServices(service: String,
-                               implementations: Iterable<String>) = resolve("META-INF/services/$service").run {
+                               implementations: Iterable<String>) = File(this, "/META-INF/services/$service").run {
+    parentFile.mkdirs()
     createNewFile()
     writeServices(implementations)
 }
 
-private fun File.writeServices(services: Iterable<String>) = writer().run {
-    for (value in services) appendln(value)
+private fun File.writeServices(services: Iterable<String>) = writer().use {
+    for (value in services) it.appendln(value)
 }
