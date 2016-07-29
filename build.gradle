@@ -15,7 +15,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group 'su.jfdev.gradle.service'
-version '0.3.0a'
+version '1.0.0a'
 
 repositories {
     jcenter()
