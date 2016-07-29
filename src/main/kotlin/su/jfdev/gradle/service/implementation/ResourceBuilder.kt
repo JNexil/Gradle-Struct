@@ -1,15 +1,14 @@
 package su.jfdev.gradle.service.implementation
 
-import com.google.common.collect.*
 import org.gradle.api.tasks.*
 import su.jfdev.gradle.service.*
 import java.io.*
 
-internal fun ServiceExtension.writeServices(services: Table<String, String, Iterable<String>>)
+internal fun ServiceExtension.writeServices(services: MutableMap<String, MutableMap<String, Iterable<String>>>)
         = sourceSets.writeServices(services)
 
-private fun SourceSetContainer.writeServices(services: Table<String, String, Iterable<String>>) {
-    for ((name, map) in services.rowMap()) getByName(name).output.resourcesDir.writeServices(map)
+private fun SourceSetContainer.writeServices(services: MutableMap<String, MutableMap<String, Iterable<String>>>) {
+    for ((name, map) in services) getByName(name).output.resourcesDir.writeServices(map)
 }
 
 private fun File.writeServices(services: Map<String, Iterable<String>>) {

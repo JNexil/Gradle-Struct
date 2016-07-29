@@ -1,12 +1,12 @@
 package su.jfdev.gradle.service.implementation
 
-import com.google.common.collect.*
 import org.gradle.api.*
 import su.jfdev.gradle.service.*
 import su.jfdev.gradle.service.util.*
+import java.util.*
 
 open class ImplementDescriber(val ext: ServiceExtension) {
-    private val implementations: Table<String, String, Iterable<String>> = HashBasedTable.create()
+    private val implementations: MutableMap<String, MutableMap<String, Iterable<String>>> = HashMap()
 
     init {
         ext.project.afterEvaluate {
@@ -22,7 +22,9 @@ open class ImplementDescriber(val ext: ServiceExtension) {
     fun add(map: Map<String, Map<String, Iterable<String>>>) {
         for ((source, values) in map.entries)
             for ((service, implementation) in values)
-                implementations.put(source, service, implementation)
+                implementations.getOrPut(source) {
+                    HashMap()
+                }[service] = implementation
     }
 
 
