@@ -12,10 +12,10 @@ class Pack(val module: Module, val name: String) {
     var dummy: Boolean get() = sourceSet != null
         set(add) = module.sources.run {
             val source = sourceSet
-            when (add) {
-                (source != null) == add -> Unit
-                true                    -> maybeCreate(name)
-                false                   -> remove(source)
+            val contains = source != null
+            when {
+                add && !contains -> maybeCreate(name)
+                !add && contains -> remove(source)
             }
         }
 
@@ -24,7 +24,8 @@ class Pack(val module: Module, val name: String) {
         it to it.configuration
     }
 
-    private val Scope.configuration: Configuration get() = module.configurations.maybeCreate(this[name])
+    private val Scope.configuration: Configuration
+        get() = module.configurations.maybeCreate(this[this@Pack.name])
 
     operator fun get(scope: Scope): Configuration = configurations[scope]!!
 }

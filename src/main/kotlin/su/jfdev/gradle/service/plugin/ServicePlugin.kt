@@ -7,20 +7,18 @@ import su.jfdev.gradle.service.require.*
 import su.jfdev.gradle.service.util.*
 
 class ServicePlugin: Plugin<Project> {
-    override fun apply(project: Project) {
-        Module(project){}
-        project.ext.setProperty("service", ServiceExtension(project))
-        project.extensions.create("require", RequireExtension::class.java, project)
-    }
 
-    class ServiceExtension(val project: Project) {
-        fun call(configure: Closure<*>) {
+    override fun apply(project: Project) {
+        project.plugins.apply("java")
+        Module(project){}
+        project.ext["service"] = closure<Closure<*>, Module> {
             Module(project){
-                val closure = configure.clone() as Closure<*>
+                val closure = it.clone() as Closure<*>
                 closure.delegate = this
                 closure.call()
             }
         }
+        project.extensions.create("require", RequireExtension::class.java, project)
     }
-}
 
+}

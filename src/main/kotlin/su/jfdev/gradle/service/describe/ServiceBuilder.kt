@@ -1,9 +1,10 @@
 package su.jfdev.gradle.service.describe
 
+import groovy.lang.*
 import su.jfdev.gradle.service.util.*
 import java.util.*
 
-class ServiceBuilder(private val module: Module) {
+class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
     private val main = dummy("main")
     private val test = dummy("test")
 
@@ -34,19 +35,19 @@ class ServiceBuilder(private val module: Module) {
                           spec = spec.build(),
                           impl = impl.build())
 
-    inner class PackBuilder(val mainName: String, val transformer: Pack.(PackBuilder) -> Unit = {}) {
+    inner class PackBuilder(val mainName: String,
+                            val transformer: Pack.(PackBuilder) -> Unit = {}): Closure<Pack>(this, this) {
 
         private val historySet: MutableSet<Pack> = HashSet()
         val history: Set<Pack> = historySet
         val dummy = pack(null)
 
-        @JvmName("call") @JvmOverloads
-        operator fun invoke(name: String = mainName) = pack(name)
+        @JvmOverloads @JvmName("doCall")
+        fun invoke(name: String = mainName) = pack(name)
 
         fun pack(name: String?) = Pack(module = module,
                                        name = name ?: mainName,
-                                       dummy = name == null)
-                .apply {
+                                       dummy = name == null).apply {
                     transformer(this, this@PackBuilder)
                     historySet += this
                 }
