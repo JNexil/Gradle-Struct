@@ -1,6 +1,7 @@
 package su.jfdev.gradle.service.describe
 
 import groovy.lang.*
+import su.jfdev.gradle.service.describe.Service.*
 import su.jfdev.gradle.service.util.*
 import java.util.*
 
@@ -8,51 +9,46 @@ class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
     private val main = dummy("main")
     private val test = dummy("test")
 
-    private fun dummy(name: String) = PackBuilder(name).history.single()
+    private fun dummy(name: String) = PackCollector(name).dummy
 
-    val api = centralized("api") {
+    val api = PackCollector("api") {
         extend(main)
     }
 
-    val spec = centralized("spec") {
+    val spec = PackCollector("spec") {
         depend(main)
         extend(test)
     }
 
-    val impl = centralized("impl") {
+    val impl = PackCollector("impl") {
         depend(main)
         extend(test)
     }
 
-    private fun centralized(name: String, transformer: Pack.() -> Unit) = PackBuilder(name) {
-        if (dummy) Unit
-        else depend(it.dummy)
+    fun build() = Service(api = api.packs,
+                          spec = spec.packs,
+                          impl = impl.packs)
 
-        transformer()
-    }
+    inner class PackCollector(val mainName: String,
+                              val transformer: Pack.() -> Unit = {}): Closure<Pack>(this, this) {
 
-    fun build() = Service(api = api.build(),
-                          spec = spec.build(),
-                          impl = impl.build())
+        private val history: MutableSet<Pack> = HashSet()
 
-    inner class PackBuilder(val mainName: String,
-                            val transformer: Pack.(PackBuilder) -> Unit = {}): Closure<Pack>(this, this) {
+        val packs: Packs = Packs(dummy = make(null), packs = history)
 
-        private val historySet: MutableSet<Pack> = HashSet()
-        val history: Set<Pack> = historySet
-        val dummy = pack(null)
+        val dummy: Pack get() = packs.dummy
 
         @JvmOverloads @JvmName("doCall")
         fun invoke(name: String = mainName) = pack(name)
 
-        fun pack(name: String?) = Pack(module = module,
-                                       name = name ?: mainName,
-                                       dummy = name == null).apply {
-                    transformer(this, this@PackBuilder)
-                    historySet += this
-                }
+        private fun make(name: String?) = Pack(module = module,
+                                               name = name ?: mainName,
+                                               isDummy = name == null).apply(transformer)
 
-        fun build() = historySet
+        private fun pack(name: String?) = make(name).apply {
+            depend(dummy)
+            history += this
+        }
     }
 }
 

@@ -5,17 +5,17 @@ import org.gradle.api.tasks.*
 
 class Pack(val module: Module, val name: String) {
 
-    constructor(module: Module, name: String, dummy: Boolean): this(module, name) {
-        this.dummy = dummy
+    constructor(module: Module, name: String, isDummy: Boolean): this(module, name) {
+        this.isDummy = isDummy
     }
 
-    var dummy: Boolean get() = sourceSet != null
-        set(add) = module.sources.run {
+    var isDummy: Boolean get() = sourceSet != null
+        set(remove) = module.sources.run {
             val source = sourceSet
             val contains = source != null
             when {
-                add && !contains -> maybeCreate(name)
-                !add && contains -> remove(source)
+                !remove && !contains -> maybeCreate(name)
+                remove && contains -> remove(source)
             }
         }
 

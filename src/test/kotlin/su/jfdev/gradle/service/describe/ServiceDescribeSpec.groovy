@@ -1,13 +1,9 @@
 package su.jfdev.gradle.service.describe
 
-import nebula.test.ProjectSpec
-import su.jfdev.gradle.service.plugin.ServicePlugin
+import spock.lang.Unroll
+import su.jfdev.gradle.service.util.ServiceSpec
 
-class ServiceDescribeSpec extends ProjectSpec {
-
-    void setup() {
-        project.plugins.apply(ServicePlugin)
-    }
+class ServiceDescribeSpec extends ServiceSpec {
 
     def "Project should contain extension with Closure"() {
         when:
@@ -16,7 +12,8 @@ class ServiceDescribeSpec extends ProjectSpec {
         service instanceof Closure
     }
 
-    def "should create source sets with custom names"() {
+    @Unroll
+    def "Should know `#known`, but not `#unknown`"() {
         given:
         project.service {
             api "myApi"
@@ -25,19 +22,12 @@ class ServiceDescribeSpec extends ProjectSpec {
         }
 
         expect:
-        containSource(known)
-        !containSource(unknown)
+        known in knownSources
+        unknown in unknownSources
 
         where:
         known << ["myApi", "mySpec", "myImpl"]
         unknown << ["api", "spec", "impl"]
     }
 
-    private boolean containSource(String name) {
-        project.sourceSets.findByName(name)
-    }
-
-    private boolean containConfiguration(String name) {
-        project.configurations.findByName(name)
-    }
 }
