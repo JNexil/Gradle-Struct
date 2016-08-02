@@ -8,7 +8,6 @@ import su.jfdev.gradle.service.describe.Scope
 import su.jfdev.gradle.service.spec.ServiceSpock
 
 import static su.jfdev.gradle.service.describe.Scope.COMPILE
-import static su.jfdev.gradle.service.describe.Scope.RUNTIME
 
 class RequireSpec extends ServiceSpock {
     public static final ALL = ["api", "main", "impl", "spec", "test"]
@@ -58,19 +57,15 @@ class RequireSpec extends ServiceSpock {
     }
 
     @Unroll
-    def "should when add service, add `#source` with #requiredFrom without #nonRequiredFrom"() {
+    def "should when add service, add `#source`"() {
         given:
         receiver.require.service ":target"
 
         expect:
-        wasRequired(scope, source)
+        wasRequired(COMPILE, source)
 
         where:
-        source | scope
-        "api"  | COMPILE
-        "main" | COMPILE
-        "impl" | RUNTIME
-        "spec" | COMPILE
+        source << ["api", "main", "impl", "spec"]
     }
 
     private void assertNonRequired(Scope scope, String receiver, List<String> target) {
