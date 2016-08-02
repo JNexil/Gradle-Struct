@@ -5,7 +5,7 @@ import su.jfdev.gradle.service.describe.*
 import su.jfdev.gradle.service.describe.Scope.*
 import su.jfdev.gradle.service.util.*
 
-class Require(val receiver: Module, val target: Module) {
+class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
     fun service(vararg implementations: String) {
         source("api")
         source("main")
@@ -32,7 +32,7 @@ class Require(val receiver: Module, val target: Module) {
             pack.depend(scope, target)
     }
 
-    fun call(function: Closure<*>){
+    fun doCall(function: Closure<*>){
         val closure = function.clone() as Closure<*>
         closure.delegate = this
         closure.call()
