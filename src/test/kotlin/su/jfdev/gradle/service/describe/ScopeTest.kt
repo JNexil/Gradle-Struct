@@ -1,8 +1,8 @@
 package su.jfdev.gradle.service.describe
 
 import org.junit.*
-import org.junit.Assert.*
 import su.jfdev.gradle.service.describe.Scope.*
+import su.jfdev.gradle.service.util.*
 
 class ScopeTest {
     @Test fun `should make configuration name by source set name`() {
@@ -10,6 +10,4 @@ class ScopeTest {
         RUNTIME["api"] `should equal` "apiRuntime"
         COMPILE["anyThing"] `should equal` "anyThingCompile"
     }
-
-    infix fun Any.`should equal`(expected: Any) = assertEquals(expected, this)
 }

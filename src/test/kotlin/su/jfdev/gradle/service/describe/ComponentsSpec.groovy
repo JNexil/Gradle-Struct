@@ -1,18 +1,26 @@
 package su.jfdev.gradle.service.describe
 
-import su.jfdev.gradle.service.spec.ServiceComponentsSpec
-import su.jfdev.gradle.service.util.ContainsChecker
+import spock.lang.Unroll
+import su.jfdev.gradle.service.spec.ServiceSpock
 
-import static su.jfdev.gradle.service.util.ProjectCheckerKt.*
+import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
-class ComponentsSpec {
-    static class KnownSourceSets extends ServiceComponentsSpec {
-        ContainsChecker checker = getKnownSources(project)
-        Iterable<String> items = ["myApi", "mySpec", "myImpl"]
-    }
+class ComponentsSpec extends ServiceSpock {
 
-    static class UnknownSourceSets extends ServiceComponentsSpec {
-        ContainsChecker checker = getUnknownSources(project)
-        Iterable<String> items = ["api", "spec", "impl"]
+    @Unroll
+    def "should contains source `#item`"(item) {
+        given:
+        project.service {
+            api item
+        }
+
+        when:
+        def checking = getKnownSources(project)
+
+        then:
+        item in checking
+
+        where:
+        item << ["myfirst", "second", "third", "api"]
     }
 }
