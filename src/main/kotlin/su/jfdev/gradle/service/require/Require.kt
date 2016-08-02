@@ -6,6 +6,11 @@ import su.jfdev.gradle.service.describe.Scope.*
 import su.jfdev.gradle.service.util.*
 
 class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
+    fun service() {
+        val default = target.service.impl.firstOrNull() ?: error("Missing implementations for ${target.path}")
+        service(default.name)
+    }
+
     fun service(vararg implementations: String) {
         source("api")
         source("main")
