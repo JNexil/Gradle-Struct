@@ -4,9 +4,9 @@ import org.gradle.api.*
 import su.jfdev.gradle.service.util.*
 
 open class RequireExtension(val project: Project) {
-    val to: RequireExtension = this
-    fun to(to: String) = get(to)
+    val from: RequireExtension = this
+    fun from(target: String) = get(target)
     fun service(to: String, vararg implementations: String) = get(to).service(*implementations)
 
-    operator fun get(to: String) = Require(project.module, project.project(to).module)
+    operator fun get(from: String) = Require(project.module, project.project(from).module)
 }
