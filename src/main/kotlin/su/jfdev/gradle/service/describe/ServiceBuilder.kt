@@ -46,7 +46,7 @@ class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
 
 
         private fun makeMain() = dummy.apply {
-            isDummy = true
+            isDummy = false
         }
 
         private fun makePack(name: String?) = make(name).apply {
