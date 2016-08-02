@@ -14,7 +14,7 @@ class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
         source("spec")
         val orDefault = if(implementations.isEmpty()) defaultImplementation else implementations.toList()
         for (implementation in orDefault)
-            source(implementation, to = "test", scope = RUNTIME)
+            source(implementation, to = "test")
     }
 
 
