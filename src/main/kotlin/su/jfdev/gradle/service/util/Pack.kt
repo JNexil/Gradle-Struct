@@ -4,7 +4,7 @@ import org.gradle.api.artifacts.*
 import su.jfdev.gradle.service.describe.*
 import su.jfdev.gradle.service.describe.Module
 
-fun Pack.depend(scope: Scope, pack: Pack, configuration: Configuration = this[scope])
+fun Pack.depend(scope: Scope, pack: Pack, configuration: Configuration = pack[scope])
         = pack.extend(scope, this, configuration)
 
 fun Pack.extend(scope: Scope, pack: Pack, configuration: Configuration = this[scope]) {
