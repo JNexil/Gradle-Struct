@@ -24,5 +24,7 @@ fun Pack.extend(pack: Pack) {
     }
 }
 
-operator fun Module.get(name: String): Set<Pack> = service.packs[name] ?: setOf(Pack(this, name))
-fun Module.getMain(name: String): Pack = get(name).single { it.name == name }
+operator fun Module.get(name: String): Set<Pack> = service.packs[name] ?: setOf(fake(name))
+fun Module.target(name: String) = service.packs[name]?.dummy ?: fake(name)
+
+fun Module.fake(name: String) = Pack(this, name)

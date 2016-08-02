@@ -27,7 +27,7 @@ class Require(val receiver: Module, val target: Module) {
 
     fun source(name: String, to: String = name, scope: Scope = COMPILE) {
         val receiver = receiver[name]
-        val target = target.getMain(to)
+        val target = target.target(to)
         for (pack in receiver)
             pack.depend(scope, target)
     }
