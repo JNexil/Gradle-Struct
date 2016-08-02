@@ -24,7 +24,14 @@ fun Pack.extend(pack: Pack) {
     }
 }
 
-operator fun Module.get(name: String): Set<Pack> = service.packs[name] ?: setOf(fake(name))
-fun Module.target(name: String) = service.packs[name]?.dummy ?: fake(name)
+operator fun Module.get(name: String) = service.packs[name].orNull ?: fakeSet(name)
+fun Module.target(name: String) = service.packs[name].orNull?.dummy ?: fake(name)
 
-fun Module.fake(name: String) = Pack(this, name)
+private fun Module.fakeSet(name: String) = setOf(fake(name))
+private fun Module.fake(name: String) = Pack(this, name)
+
+private val <T: Collection<*>>  T?.orNull: T? get() = when {
+    this == null -> null
+    isEmpty()    -> null
+    else         -> this
+}
