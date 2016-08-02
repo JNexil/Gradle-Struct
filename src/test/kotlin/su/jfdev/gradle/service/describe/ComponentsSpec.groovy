@@ -2,7 +2,6 @@ package su.jfdev.gradle.service.describe
 
 import spock.lang.Unroll
 import su.jfdev.gradle.service.spec.ServiceSpock
-import su.jfdev.gradle.service.util.PropertiesKt
 
 import static su.jfdev.gradle.service.describe.Scope.COMPILE
 import static su.jfdev.gradle.service.describe.Scope.RUNTIME
@@ -11,7 +10,6 @@ import static su.jfdev.gradle.service.util.HierarchyChecker.depend
 import static su.jfdev.gradle.service.util.HierarchyChecker.nonDepend
 
 class ComponentsSpec extends ServiceSpock {
-    def getSources() { PropertiesKt.getSourceSets(project) }
 
     def "should not contains sources without sources {}"() {
         when:

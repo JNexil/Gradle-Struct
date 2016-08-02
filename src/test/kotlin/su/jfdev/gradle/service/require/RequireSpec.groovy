@@ -1,8 +1,7 @@
 package su.jfdev.gradle.service.require
 
-import spock.lang.Specification
+import su.jfdev.gradle.service.spec.ServiceSpock
 
-
-class RequireSpec extends Specification {
+class RequireSpec extends ServiceSpock {
 
 }
