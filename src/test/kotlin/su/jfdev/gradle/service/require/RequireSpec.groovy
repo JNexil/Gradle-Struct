@@ -23,14 +23,14 @@ class RequireSpec extends ServiceSpock {
     def "should add single sourceSet"() {
         given:
         second.require.from(":first") {
-            source "api"
+            compile "api"
         }
 
         expect:
-        wasRequired("apiCompile", "apiCompile")
+        wasRequired "apiCompile"
     }
 
-    private boolean wasRequired(String to, String from) {
+    private boolean wasRequired(String to, String from = to) {
         second.configurations.getByName(to).dependencies.any {
             it instanceof ConfigurationDependency &&
                     it.configuration.name == from &&

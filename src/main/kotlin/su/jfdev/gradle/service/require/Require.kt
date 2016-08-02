@@ -4,6 +4,7 @@ import groovy.lang.*
 import su.jfdev.gradle.service.describe.*
 import su.jfdev.gradle.service.describe.Scope.*
 import su.jfdev.gradle.service.util.*
+import kotlin.jvm.JvmOverloads as over
 
 class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
 
@@ -16,18 +17,12 @@ class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
             source(implementation, to = "test", scope = RUNTIME)
     }
 
-    fun source(name: String, scope: String)
-        = source(name, name, scope)
 
-    fun source(name: String, scope: Scope)
-            = source(name, name, scope)
+    @over fun compile(name: String, to: String = name) = source(name, to, COMPILE)
 
-    fun source(name: String, to: String, scope: String) {
-        val scopeEnum = Scope[scope]
-        source(name, to, scopeEnum)
-    }
+    @over fun runtime(name: String, to: String = name) = source(name, to, RUNTIME)
 
-    fun source(name: String, to: String = name, scope: Scope = COMPILE) {
+    @over fun source(name: String, to: String = name, scope: Scope = COMPILE) {
         val receiver = receiver[name]
         val target = target.target(to)
         for (pack in receiver)
