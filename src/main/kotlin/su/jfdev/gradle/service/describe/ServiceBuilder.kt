@@ -36,7 +36,7 @@ class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
 
         val packs: Packs = Packs(dummy = make(null), packs = history)
 
-        val dummy: Pack get() = packs.dummy
+        val dummy: Pack get() = packs.dummy.createSource()
 
         @JvmOverloads @JvmName("doCall")
         operator fun invoke(name: String = mainName) = when (name) {

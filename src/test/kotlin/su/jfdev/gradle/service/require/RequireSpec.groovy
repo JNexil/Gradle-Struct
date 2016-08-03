@@ -1,15 +1,12 @@
 package su.jfdev.gradle.service.require
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import spock.lang.Unroll
-import su.jfdev.gradle.service.describe.ConfigurationDependency
-import su.jfdev.gradle.service.describe.Scope
-import su.jfdev.gradle.service.spec.ServiceSpock
+import su.jfdev.gradle.service.spec.ServiceSpec
 
 import static su.jfdev.gradle.service.describe.Scope.COMPILE
 
-class RequireSpec extends ServiceSpock {
+class RequireSpec extends ServiceSpec {
     public static final ALL = ["api", "main", "impl", "spec", "test"]
     Project target
     Project receiver
@@ -68,33 +65,5 @@ class RequireSpec extends ServiceSpock {
         source << ["api", "main", "impl", "spec"]
     }
 
-    private void assertNonRequired(Scope scope, String receiver, List<String> target) {
-        for (String fromEntry : target)
-            assert wasNotRequired(scope, receiver, fromEntry)
-    }
 
-    private void assertRequired(Scope scope, String receiver, List<String> target) {
-        for (String fromEntry : target)
-            assert wasRequired(scope, receiver, fromEntry)
-    }
-
-    private boolean wasNotRequired(Scope scope, String receiver, String target = receiver) {
-        !wasRequired(scope, receiver, target)
-    }
-
-    private boolean wasRequired(Scope scope, String receiver, String target = receiver) {
-        String $receiver = scope[receiver]
-        String $target = scope[target]
-        def configuration = this.receiver.configurations.getByName($receiver)
-        isRequired(configuration, $target)
-    }
-
-    private boolean isRequired(Configuration configuration, String $target) {
-        configuration.dependencies.any {
-            if (it instanceof ConfigurationDependency && it.target.path == this.target.path) {
-                def isTarget = it.configuration.name == $target
-                isTarget || isRequired(it.configuration, $target)
-            } else false
-        }
-    }
 }

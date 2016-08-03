@@ -1,15 +1,18 @@
 package su.jfdev.gradle.service.describe
 
+import org.gradle.api.Project
 import spock.lang.Unroll
-import su.jfdev.gradle.service.spec.ServiceSpock
+import su.jfdev.gradle.service.spec.ServiceSpec
 
 import static su.jfdev.gradle.service.describe.Scope.COMPILE
 import static su.jfdev.gradle.service.describe.Scope.RUNTIME
+import static su.jfdev.gradle.service.require.RequireSpec.ALL
 import static su.jfdev.gradle.service.util.Checking.*
-import static su.jfdev.gradle.service.util.HierarchyChecker.depend
-import static su.jfdev.gradle.service.util.HierarchyChecker.nonDepend
 
-class ComponentsSpec extends ServiceSpock {
+class ComponentsSpec extends ServiceSpec {
+    protected Project getTarget() { project }
+
+    protected Project getReceiver() { project }
 
     def "should not contains sources without sources {}"() {
         when:
@@ -88,33 +91,24 @@ class ComponentsSpec extends ServiceSpock {
     }
 
     @Unroll
-    def "should has hierarchy: #from -> #to, but not reverse"() {
+    def "should has hierarchy: #source <- #transitive, but not reverse"() {
         given:
-        def depend = depend(project)
-        def nonDepend = nonDepend(project)
+        def exclusions = ALL - transitive - source
 
         expect:
-        depend.invoke(RUNTIME, from, to)
-        depend.invoke(COMPILE, from, to)
+        assertNonRequired(COMPILE, source, exclusions)
 
-        and: "reverse"
-        nonDepend.invoke(RUNTIME, to, from)
-        nonDepend.invoke(COMPILE, to, from)
+        and:
+        assertRequired(COMPILE, source, transitive)
+
 
         where:
-        from   | to
-        "api"  | "main"
-        "api"  | "impl"
-        "api"  | "spec"
-        "api"  | "test"
-
-        "main" | "impl"
-        "main" | "test"
-        "main" | "spec"
-
-        "impl" | "test"
-
-        "spec" | "test"
+        source | transitive
+        "api"  | []
+        "main" | ["api"]
+        "impl" | ["api", "main"]
+        "spec" | ["api", "main"]
+        "test" | ["api", "main", "spec", "impl"]
     }
 
     private void buildPack(mainName, source = mainName) {

@@ -5,7 +5,11 @@ import org.gradle.api.tasks.*
 
 class Pack(val module: Module, val name: String, isDummy: Boolean = false) {
     init {
-        if(!isDummy) module.sources.maybeCreate(name)
+        if(!isDummy) createSource()
+    }
+
+    internal fun createSource() = apply {
+        module.sources.maybeCreate(name)
     }
 
     val sourceSet: SourceSet? get() = module.sources.findByName(name)
