@@ -40,14 +40,9 @@ class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
 
         @JvmOverloads @JvmName("doCall")
         operator fun invoke(name: String = mainName) = when (name) {
-            mainName -> makeMain()
+            mainName -> dummy
             else     -> makePack(name)
         }.addToHistory()
-
-
-        private fun makeMain() = dummy.apply {
-            isDummy = false
-        }
 
         private fun makePack(name: String?) = make(name).apply {
             depend(dummy)
