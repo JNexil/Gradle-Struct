@@ -12,21 +12,25 @@ class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
         source("api")
         source("main")
         source("spec")
-        val orDefault = if(implementations.isEmpty()) defaultImplementation else implementations.toList()
-        for (implementation in orDefault)
-            source(implementation, to = "test")
+        sources("impl", allowed = *implementations, to = "test")
     }
-
 
     @over fun compile(name: String, to: String = name) = source(name, to, COMPILE)
 
     @over fun runtime(name: String, to: String = name) = source(name, to, RUNTIME)
 
     @over fun source(name: String, to: String = name, scope: Scope = COMPILE) {
-        val receiver = receiver[name]
-        val target = target.target(to)
-        for (pack in receiver)
-            pack.depend(scope, target)
+        val target = target[name]
+        val receiver = receiver[to]
+        receiver.depend(target, scope)
+    }
+
+    @over fun sources(name: String, to: String = name, scope: Scope = COMPILE, vararg allowed: String) {
+        val target = target.target(name)
+        val allAllowed = allowed.toList().orNull ?: default(name)
+        for (pack in target)
+            if (pack.name in allAllowed)
+                source(name, to, scope)
     }
 
     fun doCall(function: Closure<*>){
@@ -35,8 +39,8 @@ class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
         closure.call()
     }
 
-    private val defaultImplementation: Collection<String> get() {
-        val def = target.service.impl.firstOrNull() ?: return emptyList()
+    private fun default(name: String): Collection<String> {
+        val def = target.service.packs[name]?.firstOrNull() ?: return emptyList()
         return listOf(def).map { it.name }
     }
 }

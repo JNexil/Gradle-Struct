@@ -8,14 +8,16 @@ import static su.jfdev.gradle.service.describe.Scope.COMPILE
 
 class RequireSpec extends ServiceSpec {
     public static final ALL = ["api", "main", "impl", "spec", "test"]
-    Project target
-    Project receiver
+
+    Project getTarget() { project.project(":target") }
+
+    Project getReceiver() { project.project(":receiver") }
 
     @Override
     void setup() {
         serviceTo(
-                target = addSubproject("target"),
-                receiver = addSubproject("receiver")
+                addSubproject("target"),
+                addSubproject("receiver")
         )
         target.service {
             api()
@@ -54,15 +56,19 @@ class RequireSpec extends ServiceSpec {
     }
 
     @Unroll
-    def "should when add service, add `#source`"() {
+    def "should when add service, add `#source` to `#to`"() {
         given:
         receiver.require.service ":target"
 
         expect:
-        wasRequired(COMPILE, source)
+        wasRequired(COMPILE, to, source)
 
         where:
-        source << ["api", "main", "impl", "spec"]
+        source | to
+        "api"  | "api"
+        "main" | "main"
+        "impl" | "test"
+        "spec" | "spec"
     }
 
 

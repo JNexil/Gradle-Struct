@@ -44,7 +44,7 @@ class ComponentsSpec extends ServiceSpec {
         buildPack mainName, source
 
         when: "Pack with #mainName as name shouldn't be in sourceSets"
-        def unknown = getUnknownConfigurations(project)
+        def unknown = getUnknownSources(project)
 
         then:
         mainName in unknown
@@ -91,24 +91,23 @@ class ComponentsSpec extends ServiceSpec {
     }
 
     @Unroll
-    def "should has hierarchy: #source <- #transitive, but not reverse"() {
+    def "should has hierarchy: #receiver <- #target, but not reverse"() {
         given:
-        def exclusions = ALL - transitive - source
-
+        def exclusions = ALL - target - receiver
         expect:
-        assertNonRequired(COMPILE, source, exclusions)
+        assertNonRequired(COMPILE, receiver, exclusions)
 
         and:
-        assertRequired(COMPILE, source, transitive)
+        assertRequired(COMPILE, receiver, target)
 
 
         where:
-        source | transitive
-        "api"  | []
-        "main" | ["api"]
-        "impl" | ["api", "main"]
-        "spec" | ["api", "main"]
-        "test" | ["api", "main", "spec", "impl"]
+        receiver | target
+        "api"    | []
+        "main"   | ["api"]
+        "impl"   | ["api", "main"]
+        "spec"   | ["api", "main"]
+        "test"   | ["api", "main", "spec", "impl"]
     }
 
     private void buildPack(mainName, source = mainName) {

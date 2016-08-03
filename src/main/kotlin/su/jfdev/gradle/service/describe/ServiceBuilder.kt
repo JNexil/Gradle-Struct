@@ -6,54 +6,44 @@ import su.jfdev.gradle.service.util.*
 import java.util.*
 
 class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
-    private val main = dummy("main")
-    private val test = dummy("test")
+    val api = PackBuilder("api")
+    val main = PackBuilder("main") depend api
+    val impl = PackBuilder("impl") depend main
+    val spec = PackBuilder("spec") depend main
+    val test = PackBuilder("test") depend impl depend spec
 
-    private fun dummy(name: String) = PackCollector(name).dummy
+    fun build() = Service(api, main, impl, spec, test)
 
-    val api = PackCollector("api") {
-        extend(main)
-    }
-
-    val spec = PackCollector("spec") {
-        depend(main)
-        extend(test)
-    }
-
-    val impl = PackCollector("impl") {
-        depend(main)
-        extend(test)
-    }
-
-    fun build() = Service(api = api.packs,
-                          spec = spec.packs,
-                          impl = impl.packs)
-
-    inner class PackCollector(val mainName: String,
-                              val transformer: Pack.() -> Unit = {}): Closure<Pack>(this, this) {
-
-        private val history: MutableSet<Pack> = HashSet()
-
-        val packs: Packs = Packs(dummy = make(null), packs = history)
-
-        val dummy: Pack get() = packs.dummy.createSource()
+    inner class PackBuilder(val main: String): Closure<Pack>(Unit, Unit) {
+        val registry: MutableSet<String> = HashSet()
+        val dependencies: MutableSet<PackBuilder> = HashSet()
+        internal val users: MutableSet<PackBuilder> = HashSet()
 
         @JvmOverloads @JvmName("doCall")
-        operator fun invoke(name: String = mainName) = when (name) {
-            mainName -> dummy
-            else     -> makePack(name)
-        }.addToHistory()
+        operator fun invoke(name: String = main) = registry.add(name)
 
-        private fun makePack(name: String?) = make(name).apply {
-            depend(dummy)
+        infix fun depend(pack: PackBuilder) = apply {
+            pack.users += this
+            for (user in users) users += user
+
+            dependencies += pack
+            for (child in pack.dependencies) dependencies += child
         }
 
-        private fun make(name: String?) = Pack(module = module,
-                                               name = name ?: mainName,
-                                               isDummy = name == null).apply(transformer)
+        fun build(map: Map<String, Packs>) = Packs(main, dummy = buildDummy(), packs = buildPacks()).apply {
+            if (dummy.isDummy) forEach {
+                it depend dummy
+            }
+            for (dependency in dependencies) {
+                val dependencyPack = map[dependency.main] ?: error("${dependency.main} should be registered before $main")
+                dummy depend dependencyPack
+            }
+        }
 
-        private fun Pack.addToHistory() = apply {
-            history += this
+        private fun buildDummy() = Pack(module, main, main in registry)
+
+        private fun buildPacks(): Set<Pack> = HashSet<Pack>().let {
+            registry.mapTo(it) { Pack(module, it, real = true) }
         }
     }
 }
