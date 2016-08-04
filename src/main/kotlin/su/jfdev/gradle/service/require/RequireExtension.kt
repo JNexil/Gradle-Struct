@@ -11,5 +11,5 @@ open class RequireExtension(val project: Project) {
     fun service(to: String, vararg implementations: String) = get(to).service(*implementations)
 
     @JvmName("getAt")
-    operator fun get(from: String) = Require(project.module, project.project(from).module)
+    operator fun get(from: String) = Require(project, project.project(from))
 }

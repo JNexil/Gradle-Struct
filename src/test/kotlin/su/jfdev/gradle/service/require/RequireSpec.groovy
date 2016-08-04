@@ -19,6 +19,7 @@ class RequireSpec extends ServiceSpec {
                 addSubproject("target"),
                 addSubproject("receiver")
         )
+        project.service "impl"
     }
 
     @Unroll
@@ -28,7 +29,7 @@ class RequireSpec extends ServiceSpec {
         def exclusions = ALL - transitive - source
 
         expect:
-        wasRequired(COMPILE, source)
+        isRequired(COMPILE, source)
 
         and:
         assertNonRequired(COMPILE, source, exclusions)
@@ -51,7 +52,7 @@ class RequireSpec extends ServiceSpec {
         receiver.require.service ":target"
 
         expect:
-        wasRequired(COMPILE, to, source)
+        isRequired(COMPILE, to, source)
 
         where:
         source | to

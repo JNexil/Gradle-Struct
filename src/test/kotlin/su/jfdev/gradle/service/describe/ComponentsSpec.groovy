@@ -15,6 +15,11 @@ class ComponentsSpec extends ServiceSpec {
 
     protected Project getReceiver() { project }
 
+    @Override
+    void setup() {
+        target.service "impl"
+    }
+
     def "should contains default sources"() {
         when:
         def known = getKnownSources(project)
@@ -23,7 +28,7 @@ class ComponentsSpec extends ServiceSpec {
         source in known
 
         where:
-        source << ["api", "spec", "impl"]
+        source << ["api", "spec", "main", "test"]
     }
 
     def "should contains configurations from given source"() {
@@ -37,13 +42,14 @@ class ComponentsSpec extends ServiceSpec {
         COMPILE[mainName] in checking
 
         where:
-        mainName << ["api", "spec", "impl"]
+        mainName << ["api", "spec", "main", "test"]
     }
 
     @Unroll
     def "should has hierarchy: #receiver <- #target, but not reverse"() {
         given:
         def exclusions = ALL - target - receiver
+
         expect:
         assertNonRequired(COMPILE, receiver, exclusions)
 

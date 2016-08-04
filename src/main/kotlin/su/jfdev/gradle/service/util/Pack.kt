@@ -1,5 +1,6 @@
 package su.jfdev.gradle.service.util
 
+import org.gradle.api.*
 import su.jfdev.gradle.service.dependency.*
 import su.jfdev.gradle.service.describe.*
 
@@ -13,11 +14,4 @@ infix fun PackDependency.depend(pack: PackDependency) {
     configuration.dependencies += pack
 }
 
-operator fun Module.get(name: String) = fake(name)
-private fun Module.fake(name: String) = Pack(this, name)
-
-val <T: Collection<*>>  T?.orNull: T? get() = when {
-    this == null -> null
-    isEmpty()    -> null
-    else         -> this
-}
+operator fun Project.get(name: String) = Pack(this, name)

@@ -1,12 +1,13 @@
 package su.jfdev.gradle.service.require
 
 import groovy.lang.*
+import org.gradle.api.*
 import su.jfdev.gradle.service.describe.*
 import su.jfdev.gradle.service.describe.Scope.*
 import su.jfdev.gradle.service.util.*
 import kotlin.jvm.JvmOverloads as over
 
-class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
+class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
 
     fun service(vararg implementations: String) {
         source("api")

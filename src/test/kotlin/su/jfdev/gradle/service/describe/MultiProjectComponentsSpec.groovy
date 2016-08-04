@@ -9,8 +9,6 @@ class MultiProjectComponentsSpec extends ComponentsSpec {
         project = addSubproject("sub")
         parent.subprojects {
             apply plugin: ServicePlugin
-            println(dependencies)
         }
-        println(project)
     }
 }

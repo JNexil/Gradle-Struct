@@ -1,10 +1,12 @@
 package su.jfdev.gradle.service.spec
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import su.jfdev.gradle.service.dependency.PackDependency
+import su.jfdev.gradle.service.describe.Pack
 import su.jfdev.gradle.service.describe.Scope
 import su.jfdev.gradle.service.plugin.ServicePlugin
+
+import static su.jfdev.gradle.service.util.PackKt.get
 
 abstract class ServiceSpec extends nebula.test.ProjectSpec {
     protected abstract Project getTarget()
@@ -24,26 +26,29 @@ abstract class ServiceSpec extends nebula.test.ProjectSpec {
     }
 
     protected boolean wasNotRequired(Scope scope, String receiver, String target = receiver) {
-        !wasRequired(scope, receiver, target)
+        !isRequired(scope, receiver, target)
     }
 
     protected void assertRequired(Scope scope, String receiver, List<String> target) {
         for (fromEntry in target)
-            assert wasRequired(scope, receiver, fromEntry)
+            assert isRequired(scope, receiver, fromEntry)
     }
 
-    protected boolean wasRequired(Scope scope, String receiver, String target = receiver) {
-        String $receiver = scope[receiver]
-        String $target = scope[target]
-        def receiverConf = this.receiver.configurations.getByName($receiver)
-        isRequired(receiverConf, $target)
+    protected boolean isRequired(Scope scope, String receiver, String target = receiver) {
+        Pack $receiver = get(this.receiver, receiver)
+        Pack $target = get(this.target, target)
+        isRequired(scope, $receiver, $target)
     }
 
-    protected boolean isRequired(Configuration receiver, String $target) {
-        receiver.dependencies.any {
-            if (it instanceof PackDependency && it.target.path == this.target.path) {
-                it.configuration.name == $target || isRequired(it.configuration, $target)
-            } else false
+    protected static boolean isRequired(Scope scope, Pack receiver, Pack target) {
+        def $receiver = receiver[scope]
+        def $target = target[scope]
+        isRequired($receiver, $target)
+    }
+
+    public static boolean isRequired(PackDependency $receiver, PackDependency $target) {
+        $receiver.configuration.allDependencies.any {
+            $target.contentEquals(it) || (it instanceof PackDependency && isRequired(it, $receiver))
         }
     }
 }
