@@ -4,7 +4,7 @@ import org.gradle.api.*
 import su.jfdev.gradle.service.util.*
 import java.util.*
 
-class ServiceBuilder(private val project: Project, container: Iterable<String> = emptyList()) {
+class PackLinker(private val project: Project, container: Iterable<String> = emptyList()) {
     private val api = UnlinkedPack("api")
     private val test = UnlinkedPack("test")
     private val main = UnlinkedPack("main") depend api

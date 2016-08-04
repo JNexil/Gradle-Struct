@@ -20,6 +20,6 @@ class ServicePlugin: Plugin<Project> {
         operator fun invoke(vararg implementations: String) = project.improvePacks(*implementations)
     }
 
-    private fun Project.improvePacks(vararg implementations: String) = ServiceBuilder(this, implementations.toSet())
+    private fun Project.improvePacks(vararg implementations: String) = PackLinker(this, implementations.toSet())
 
 }
