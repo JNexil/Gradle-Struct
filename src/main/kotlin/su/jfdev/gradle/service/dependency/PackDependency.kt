@@ -1,13 +1,13 @@
 package su.jfdev.gradle.service.dependency
 
+import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.internal.artifacts.*
 import su.jfdev.gradle.service.describe.*
-import su.jfdev.gradle.service.describe.Module
 
 data class PackDependency(val pack: Pack, val scope: Scope): Dependency, ResolvableDependency {
 
-    val target: Module get() = pack.module
+    val target: Project get() = pack.project
 
     val configuration: Configuration get() = target.configurations.getByName(scope[pack.name])
 
@@ -23,6 +23,7 @@ data class PackDependency(val pack: Pack, val scope: Scope): Dependency, Resolva
         val transit = target.dependencies.project(mapOf("path" to target.path, "configuration" to configuration))
         ctx.add(transit)
 
-        ctx.add(pack.sourceSet.output)
+        val source = pack.sourceSet ?: return
+        ctx.add(source.output)
     }
 }
