@@ -15,11 +15,6 @@ class ComponentsSpec extends ServiceSpec {
 
     protected Project getReceiver() { project }
 
-    @Override
-    void setup() {
-        target.service "impl"
-    }
-
     def "should contains default sources"() {
         when:
         def known = getKnownSources(project)
@@ -28,7 +23,7 @@ class ComponentsSpec extends ServiceSpec {
         source in known
 
         where:
-        source << ["api", "spec", "main", "test"]
+        source << ["api", "main", "test"]
     }
 
     def "should contains configurations from given source"() {
@@ -42,7 +37,7 @@ class ComponentsSpec extends ServiceSpec {
         COMPILE[mainName] in checking
 
         where:
-        mainName << ["api", "spec", "main", "test"]
+        mainName << ["api", "main", "test"]
     }
 
     @Unroll
@@ -61,8 +56,6 @@ class ComponentsSpec extends ServiceSpec {
         receiver | target
         "api"    | []
         "main"   | ["api"]
-        "impl"   | ["api", "main"]
-        "spec"   | ["api", "main"]
-        "test"   | ["api", "main", "spec", "impl"]
+        "test"   | ["api", "main"]
     }
 }
