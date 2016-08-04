@@ -1,35 +1,34 @@
 package su.jfdev.gradle.service.describe
 
-import groovy.lang.*
+import org.gradle.api.*
 import su.jfdev.gradle.service.util.*
 import java.util.*
 
-class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
-    val api = PackBuilder("api")
-    val main = PackBuilder("main") depend api
-    val impl = PackBuilder("impl") depend main
-    val spec = PackBuilder("spec") depend main
-    val test = PackBuilder("test") depend impl depend spec
+class ServiceBuilder(private val project: Project, container: Iterable<String> = emptyList()) {
+    private val api = UnlinkedPack("api")
+    private val test = UnlinkedPack("test")
+    private val main = UnlinkedPack("main") depend api
+    private val other = container.map { UnlinkedPack(it) depend main extend test }
 
-    fun build() = Service(api, main, impl, spec, test)
+    init {
+        val all = other + arrayOf(api, main, test)
+        for (builder in all) builder.improveDependencies()
+    }
 
-    inner class PackBuilder(val main: String): Closure<Pack>(Unit, Unit) {
-        val dependencies: MutableSet<PackBuilder> = HashSet()
-        internal val users: MutableSet<PackBuilder> = HashSet()
+    private fun UnlinkedPack.improveDependencies() {
+        for (dependency in dependencies) pack depend dependency.pack
+    }
 
-        infix fun depend(pack: PackBuilder) = apply {
-            pack.users += this
-            for (user in users) users += user
+    private inner class UnlinkedPack(name: String) {
+        val pack = Pack[project, name]
 
-            dependencies += pack
-            for (child in pack.dependencies) dependencies += child
+        val dependencies: MutableSet<UnlinkedPack> = HashSet()
+
+        infix fun extend(pack: UnlinkedPack) = apply {
+            pack depend this
         }
-
-        internal fun build(map: Map<String, Pack>) = Pack(module, main).apply {
-            for (dependency in dependencies) {
-                val pack = map[dependency.main] ?: error("${dependency.main} should be registered before $main")
-                this depend pack
-            }
+        infix fun depend(pack: UnlinkedPack) = apply {
+            dependencies += pack
         }
     }
 }
