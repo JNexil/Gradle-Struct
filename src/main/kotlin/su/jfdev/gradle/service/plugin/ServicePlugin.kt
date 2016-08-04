@@ -10,6 +10,7 @@ class ServicePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         project.plugins.apply("java")
+        ServiceBuilder(project)
         project.ext["service"] = ServiceSetup(project)
         project.extensions.create("require", RequireExtension::class.java, project)
     }
