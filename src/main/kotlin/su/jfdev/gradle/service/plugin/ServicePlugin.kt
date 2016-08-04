@@ -8,16 +8,18 @@ import su.jfdev.gradle.service.util.*
 
 class ServicePlugin: Plugin<Project> {
 
-    override fun apply(project: Project) {
-        project.plugins.apply("java")
-        ServiceBuilder(project)
-        project.ext["service"] = ServiceSetup(project)
-        project.extensions.create("require", RequireExtension::class.java, project)
+    override fun apply(project: Project) = project.run {
+        plugins.apply("java")
+        improvePacks()
+        extensions.create("require", RequireExtension::class.java, project)
+        ext["service"] = ServiceSetup(project)
     }
 
     inner class ServiceSetup(val project: Project): Closure<Any>(Unit) {
         @JvmName("doCall")
-        operator fun invoke(vararg implementations: String) = ServiceBuilder(project, implementations.toSet())
+        operator fun invoke(vararg implementations: String) = project.improvePacks(*implementations)
     }
+
+    private fun Project.improvePacks(vararg implementations: String) = ServiceBuilder(this, implementations.toSet())
 
 }
