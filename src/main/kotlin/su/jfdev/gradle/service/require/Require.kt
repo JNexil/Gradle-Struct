@@ -12,11 +12,7 @@ class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
     fun service(vararg implementations: String) {
         source("api")
         source("main")
-        source("spec")
-        when {
-            implementations.isEmpty() -> test("impl")
-            else                      -> test(*implementations)
-        }
+        test(*implementations)
     }
 
     fun test(vararg names: String) = names.forEach {
