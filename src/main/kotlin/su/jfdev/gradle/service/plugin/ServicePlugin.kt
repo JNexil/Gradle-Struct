@@ -10,15 +10,13 @@ class ServicePlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         project.plugins.apply("java")
-        Module(project){}
-        project.ext["service"] = closure<Closure<*>, Module> {
-            Module(project){
-                val closure = it.clone() as Closure<*>
-                closure.delegate = this
-                closure.call()
-            }
-        }
+        project.ext["service"] = ServiceSetup(project)
         project.extensions.create("require", RequireExtension::class.java, project)
+    }
+
+    inner class ServiceSetup(val project: Project): Closure<Any>(Unit) {
+        @JvmName("doCall")
+        operator fun invoke(vararg implementations: String) = ServiceBuilder(project, implementations.toSet())
     }
 
 }
