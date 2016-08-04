@@ -8,7 +8,9 @@ class MultiProjectComponentsSpec extends ComponentsSpec {
         def parent = project
         project = addSubproject("sub")
         parent.subprojects {
-            plugins.apply(ServicePlugin)
+            apply plugin: ServicePlugin
+            println(dependencies)
         }
+        println(project)
     }
 }

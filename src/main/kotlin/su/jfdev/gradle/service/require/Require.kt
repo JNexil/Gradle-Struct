@@ -12,7 +12,14 @@ class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
         source("api")
         source("main")
         source("spec")
-        sources("impl", allowed = *implementations, to = "test")
+        when {
+            implementations.isEmpty() -> test("impl")
+            else                      -> test(*implementations)
+        }
+    }
+
+    fun test(vararg names: String) = names.forEach {
+        sources(it, "test")
     }
 
     @over fun compile(name: String, to: String = name) = source(name, to, COMPILE)
@@ -25,22 +32,15 @@ class Require(val receiver: Module, val target: Module): Closure<Any>(Unit) {
         receiver.depend(target, scope)
     }
 
-    @over fun sources(name: String, to: String = name, scope: Scope = COMPILE, vararg allowed: String) {
-        val target = target.target(name)
-        val allAllowed = allowed.toList().orNull ?: default(name)
-        for (pack in target)
-            if (pack.name in allAllowed)
-                source(name, to, scope)
+    @over fun sources(name: String, to: String = name) {
+        val target = target[name]
+        val receiver = receiver[to]
+        receiver depend target
     }
 
     fun doCall(function: Closure<*>){
         val closure = function.clone() as Closure<*>
         closure.delegate = this
         closure.call()
-    }
-
-    private fun default(name: String): Collection<String> {
-        val def = target.service.packs[name]?.firstOrNull() ?: return emptyList()
-        return listOf(def).map { it.name }
     }
 }

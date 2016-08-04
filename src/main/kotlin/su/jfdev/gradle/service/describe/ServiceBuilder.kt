@@ -1,7 +1,6 @@
 package su.jfdev.gradle.service.describe
 
 import groovy.lang.*
-import su.jfdev.gradle.service.describe.Service.*
 import su.jfdev.gradle.service.util.*
 import java.util.*
 
@@ -15,12 +14,8 @@ class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
     fun build() = Service(api, main, impl, spec, test)
 
     inner class PackBuilder(val main: String): Closure<Pack>(Unit, Unit) {
-        val registry: MutableSet<String> = HashSet()
         val dependencies: MutableSet<PackBuilder> = HashSet()
         internal val users: MutableSet<PackBuilder> = HashSet()
-
-        @JvmOverloads @JvmName("doCall")
-        operator fun invoke(name: String = main) = registry.add(name)
 
         infix fun depend(pack: PackBuilder) = apply {
             pack.users += this
@@ -30,20 +25,11 @@ class ServiceBuilder(private val module: Module): GroovyObjectSupport() {
             for (child in pack.dependencies) dependencies += child
         }
 
-        fun build(map: Map<String, Packs>) = Packs(main, dummy = buildDummy(), packs = buildPacks()).apply {
-            if (dummy.isDummy) forEach {
-                it depend dummy
-            }
+        internal fun build(map: Map<String, Pack>) = Pack(module, main).apply {
             for (dependency in dependencies) {
-                val dependencyPack = map[dependency.main] ?: error("${dependency.main} should be registered before $main")
-                dummy depend dependencyPack
+                val pack = map[dependency.main] ?: error("${dependency.main} should be registered before $main")
+                this depend pack
             }
-        }
-
-        private fun buildDummy() = Pack(module, main, main in registry)
-
-        private fun buildPacks(): Set<Pack> = HashSet<Pack>().let {
-            registry.mapTo(it) { Pack(module, it, real = true) }
         }
     }
 }

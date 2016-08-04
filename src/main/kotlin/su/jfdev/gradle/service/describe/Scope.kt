@@ -5,5 +5,8 @@ enum class Scope(val scope: String) {
     COMPILE("compile");
 
     @JvmName("getAt")
-    operator fun get(name: String) = name.decapitalize() + scope.capitalize()
+    operator fun get(name: String) = when (name) {
+        "main" -> scope
+        else   -> name.decapitalize() + scope.capitalize()
+    }
 }

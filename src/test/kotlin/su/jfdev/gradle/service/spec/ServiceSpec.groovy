@@ -42,8 +42,7 @@ abstract class ServiceSpec extends nebula.test.ProjectSpec {
     protected boolean isRequired(Configuration receiver, String $target) {
         receiver.dependencies.any {
             if (it instanceof PackDependency && it.target.path == this.target.path) {
-                def isTarget = it.configuration.name == $target
-                isTarget || isRequired(it.configuration, $target)
+                it.configuration.name == $target || isRequired(it.configuration, $target)
             } else false
         }
     }

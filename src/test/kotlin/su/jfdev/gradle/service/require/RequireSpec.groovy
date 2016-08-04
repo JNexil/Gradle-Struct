@@ -19,16 +19,6 @@ class RequireSpec extends ServiceSpec {
                 addSubproject("target"),
                 addSubproject("receiver")
         )
-        target.service {
-            api()
-            spec()
-            impl()
-        }
-        receiver.service {
-            api()
-            spec()
-            impl()
-        }
     }
 
     @Unroll
