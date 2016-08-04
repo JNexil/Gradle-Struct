@@ -7,7 +7,7 @@ import java.util.*
 class PackLinker(private val project: Project, container: Iterable<String> = emptyList()) {
     private val api = UnlinkedPack("api")
     private val test = UnlinkedPack("test")
-    private val main = UnlinkedPack("main") depend api
+    private val main = UnlinkedPack("main") depend api extend test
     private val other = container.map { UnlinkedPack(it) depend main extend test }
 
     init {
