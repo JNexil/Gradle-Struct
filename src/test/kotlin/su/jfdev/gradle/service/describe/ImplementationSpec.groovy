@@ -3,8 +3,9 @@ package su.jfdev.gradle.service.describe
 import org.gradle.api.Project
 import spock.lang.Unroll
 import su.jfdev.gradle.service.spec.ServiceSpec
-import su.jfdev.gradle.service.util.PackKt
 
+import static su.jfdev.gradle.service.describe.Scope.COMPILE
+import static su.jfdev.gradle.service.describe.Scope.RUNTIME
 import static su.jfdev.gradle.service.util.Checking.getKnownConfigurations
 import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
@@ -53,23 +54,25 @@ class ImplementationSpec extends ServiceSpec {
     }
 
     @Unroll
-    def "`#source` should depend `main`"() {
-        expect:
-        isRequired(Scope.COMPILE, source)
+    def "should has hierarchy: #receiver <- [api,main], but not [test]"() {
+        given:
+        def target = ["api", "main"]
+        def exclusions = ["api", "main", "impl", "alt", "test"] - target - receiver
+
+        expect: "compile"
+        assertNonRequired(COMPILE, receiver, exclusions)
 
         and:
-        isRequired(Scope.RUNTIME, source)
+        assertRequired(COMPILE, receiver, target)
+
+        and: "runtime"
+        assertNonRequired(RUNTIME, receiver, exclusions)
+
+        and:
+        assertRequired(RUNTIME, receiver, target)
+
 
         where:
-        source << ["impl", "alt"]
-    }
-
-
-
-    boolean isRequired(Scope scope, String source){
-        def configuration = scope[source]
-        def $configuration = project.configurations.getByName(configuration)
-        def dependency = PackKt.get(project, "main").get(scope)
-        $configuration.allDependencies.any { it == dependency }
+        receiver << ["impl", "alt"]
     }
 }
