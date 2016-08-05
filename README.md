@@ -1,2 +1,2 @@
 # Gradle-Struct
-Gradle plugin, which organize structure: Service -> Utils -> Implementations and Specification -> Implementations
+Gradle plugin, which organize structure: API - MAIN - [IMPLEMENTATIONS] - TEST
