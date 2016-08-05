@@ -21,8 +21,8 @@ abstract class PackSpec extends ServiceSpec {
         pack.project == project
 
         when:
-        def runtime = pack.configurations.get RUNTIME
-        def compile = pack.configurations.get COMPILE
+        def runtime = pack.get RUNTIME
+        def compile = pack.get COMPILE
 
         then:
         runtime.name == "anySrcRuntime"
@@ -31,14 +31,14 @@ abstract class PackSpec extends ServiceSpec {
 
     static class NonCreated extends PackSpec {
         void setup() {
-            pack = Pack.get(project, "anySrc")
+            pack = new Pack(project, "anySrc")
         }
     }
 
     static class Created extends PackSpec {
         void setup() {
             project.sourceSets.maybeCreate "anySrc"
-            pack = Pack.get(project, "anySrc")
+            pack = new Pack(project, "anySrc")
         }
     }
 }

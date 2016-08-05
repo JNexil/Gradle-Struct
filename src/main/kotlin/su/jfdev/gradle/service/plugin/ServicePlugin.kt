@@ -15,7 +15,7 @@ class ServicePlugin: Plugin<Project> {
     }
 
     private fun improveDescribe() = container("describe"){
-        Pack[project, it]
+        Pack(project, it)
     }.apply {
         maybeCreate("api") extend maybeCreate("main")
     }
