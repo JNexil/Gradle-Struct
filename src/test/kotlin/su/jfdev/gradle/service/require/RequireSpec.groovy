@@ -20,7 +20,9 @@ class RequireSpec extends ServiceSpec {
                 addSubproject("receiver")
         )
         project.subprojects {
-            service "impl"
+            implementations {
+                impl
+            }
         }
     }
 
