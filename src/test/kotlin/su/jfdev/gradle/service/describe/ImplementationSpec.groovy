@@ -17,7 +17,10 @@ class ImplementationSpec extends ServiceSpec {
 
     @Override
     void setup() {
-        project.service "impl", "alt"
+        project.implementations {
+            impl
+            alt
+        }
     }
 
     @Unroll
@@ -54,27 +57,26 @@ class ImplementationSpec extends ServiceSpec {
     }
 
     @Unroll
-    def "should has hierarchy: #receiver <- [api,main], but not [test]"() {
-        given:
-        def target = ["api", "main"]
-        def exclusions = ["api", "main", "impl", "alt", "test"] - target - receiver
+    def "should has hierarchy: [#target] <- [#receiver]"() {
+        when:
+        def requiring = requiring(scope: COMPILE, receiverSrc: receiver, targetSrc: target)
 
-        def requiring = requiring(scope: COMPILE, receiverSrc: receiver)
+        then: "compile"
+        requiring.isRequired()
 
-        expect: "compile"
-        requiring.assertNonRequired(exclusions)
+        when:
+        requiring = requiring.with(scope: RUNTIME)
 
-        and:
-        requiring.assertRequired(target)
-
-        and: "runtime"
-        requiring.assertNonRequired(exclusions)
-
-        and:
-        requiring.assertRequired(target)
+        then:
+        requiring.isRequired()
 
 
         where:
-        receiver << ["impl", "alt"]
+        receiver | target
+        "test"   | "impl"
+        "test"   | "alt"
+
+        "impl"   | "main"
+        "alt"    | "main"
     }
 }

@@ -2,7 +2,7 @@ package su.jfdev.gradle.service.require
 
 import groovy.transform.ToString
 import org.gradle.api.Project
-import su.jfdev.gradle.service.dependency.PackDependency
+import su.jfdev.gradle.service.describe.PackDependency
 import su.jfdev.gradle.service.describe.Pack
 import su.jfdev.gradle.service.describe.Scope
 
@@ -37,16 +37,8 @@ class Requiring {
         with(targetSrc: target)
     }
 
-    void assertNonRequired(String... targets) {
-        for (target in targets.collect { with(it) }) assert target.isNotRequired()
-    }
-
     void assertNonRequired(Iterable<String> targets) {
         for (target in targets.collect { with(it) }) assert target.isNotRequired()
-    }
-
-    void assertRequired(String... targets) {
-        for (target in targets.collect { with(it) }) assert target.isRequired()
     }
 
     void assertRequired(Iterable<String> targets) {
