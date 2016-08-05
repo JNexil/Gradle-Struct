@@ -2,7 +2,6 @@ package su.jfdev.gradle.service.describe
 
 import org.gradle.api.*
 import org.gradle.api.tasks.*
-import su.jfdev.gradle.service.dependency.*
 import su.jfdev.gradle.service.util.*
 
 data class Pack(val project: Project, val name: String) {
