@@ -18,11 +18,14 @@ class ServicePlugin: Plugin<Project> {
         Pack[project, it]
     }.apply {
         maybeCreate("api") extend maybeCreate("main")
-        project.extensions.add("describe", this)
-    }
+    }.add("describe")
 
     private fun NamedDomainObjectContainer<Pack>.improveImplementations() = project.container(Pack::class.java){
         maybeCreate(it) depend maybeCreate("main") extend maybeCreate("test")
+    }.add("implementations")
+
+    private fun <T> T.add(name: String) = apply {
+        project.extensions.add(name, this)
     }
 
     private fun improveRequire() = project.extensions.create("require", RequireExtension::class.java, project)
