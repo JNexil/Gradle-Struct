@@ -1,25 +1,29 @@
 package su.jfdev.gradle.service.plugin
 
-import groovy.lang.*
 import org.gradle.api.*
 import su.jfdev.gradle.service.describe.*
 import su.jfdev.gradle.service.require.*
-import su.jfdev.gradle.service.util.*
 
 class ServicePlugin: Plugin<Project> {
+    private lateinit var project: Project
 
-    override fun apply(project: Project) = project.run {
-        plugins.apply("java")
-        improvePacks()
-        extensions.create("require", RequireExtension::class.java, project)
-        ext["service"] = ServiceSetup(project)
+    override fun apply(project: Project) {
+        this.project = project
+        project.plugins.apply("java")
+        improveDescribe().improveImplementations()
+        improveRequire()
     }
 
-    inner class ServiceSetup(val project: Project): Closure<Any>(Unit) {
-        @JvmName("doCall")
-        operator fun invoke(vararg implementations: String) = project.improvePacks(*implementations)
+    private fun improveDescribe() = project.container(Pack::class.java){
+        Pack[project, it]
+    }.apply {
+        maybeCreate("api") extend maybeCreate("main")
+        project.extensions.add("describe", this)
     }
 
-    private fun Project.improvePacks(vararg implementations: String) = PackLinker(this, implementations.toSet())
+    private fun NamedDomainObjectContainer<Pack>.improveImplementations() = project.container(Pack::class.java){
+        maybeCreate(it) depend maybeCreate("main") extend maybeCreate("test")
+    }
 
+    private fun improveRequire() = project.extensions.create("require", RequireExtension::class.java, this)
 }
