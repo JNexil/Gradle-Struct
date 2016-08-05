@@ -11,9 +11,9 @@ import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
 class ImplementationSpec extends ServiceSpec {
 
-    protected Project getTarget() { project }
+    Project getTarget() { project }
 
-    protected Project getReceiver() { project }
+    Project getReceiver() { project }
 
     @Override
     void setup() {
@@ -38,13 +38,13 @@ class ImplementationSpec extends ServiceSpec {
         def knownConfiguration = getKnownConfigurations(project)
 
         when: "should contains compile configurations"
-        String compile = Scope.COMPILE[source]
+        String compile = COMPILE[source]
 
         then:
         compile in knownConfiguration
 
         when: "should contains runtime configurations"
-        String runtime = Scope.RUNTIME[source]
+        String runtime = RUNTIME[source]
 
         then:
         runtime in knownConfiguration
@@ -59,17 +59,19 @@ class ImplementationSpec extends ServiceSpec {
         def target = ["api", "main"]
         def exclusions = ["api", "main", "impl", "alt", "test"] - target - receiver
 
+        def requiring = requiring(scope: COMPILE, receiverSrc: receiver)
+
         expect: "compile"
-        assertNonRequired(COMPILE, receiver, exclusions)
+        requiring.assertNonRequired(exclusions)
 
         and:
-        assertRequired(COMPILE, receiver, target)
+        requiring.assertRequired(target)
 
         and: "runtime"
-        assertNonRequired(RUNTIME, receiver, exclusions)
+        requiring.assertNonRequired(exclusions)
 
         and:
-        assertRequired(RUNTIME, receiver, target)
+        requiring.assertRequired(target)
 
 
         where:
