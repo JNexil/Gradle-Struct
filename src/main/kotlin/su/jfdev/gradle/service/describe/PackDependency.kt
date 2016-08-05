@@ -8,7 +8,7 @@ data class PackDependency(val pack: Pack, val scope: Scope): Dependency, Resolva
 
     val target: Project get() = pack.project
 
-    val configuration: Configuration get() = target.configurations.getByName(scope[pack.name])
+    val configuration: Configuration get() = target.configurations.maybeCreate(scope[pack.name])
 
     override fun getGroup() = target.group.toString()
     override fun getName(): String = target.name
