@@ -6,7 +6,7 @@ import su.jfdev.gradle.service.util.*
 
 data class Pack(val project: Project, val name: String) {
 
-    val sourceSet: SourceSet get() = project.sourceSets.maybeCreate(name)
+    val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
 
     val configurations: Map<Scope, PackDependency> = Scope.values().associate {
         it to PackDependency(this, it)
