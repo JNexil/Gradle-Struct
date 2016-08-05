@@ -3,7 +3,6 @@ package su.jfdev.gradle.service.describe
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.internal.artifacts.*
-import su.jfdev.gradle.service.describe.*
 
 data class PackDependency(val pack: Pack, val scope: Scope): Dependency, ResolvableDependency {
 
@@ -23,7 +22,6 @@ data class PackDependency(val pack: Pack, val scope: Scope): Dependency, Resolva
         val transit = target.dependencies.project(mapOf("path" to target.path, "configuration" to configuration))
         ctx.add(transit)
 
-        val source = pack.sourceSet ?: return
-        ctx.add(source.output)
+        ctx.add(pack.sourceSet.output)
     }
 }

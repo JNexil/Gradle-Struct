@@ -6,7 +6,7 @@ import su.jfdev.gradle.service.util.*
 
 data class Pack(val project: Project, val name: String) {
 
-    val sourceSet: SourceSet? get() = project.sourceSets.findByName(name)
+    val sourceSet: SourceSet get() = project.sourceSets.maybeCreate(name)
 
     val configurations: Map<Scope, PackDependency> = Scope.values().associate {
         it to PackDependency(this, it)
@@ -36,8 +36,6 @@ data class Pack(val project: Project, val name: String) {
     }
 
     companion object {
-        @JvmStatic operator fun get(project: Project, name: String) = Pack(project, name).apply {
-            project.sourceSets.maybeCreate(name)
-        }
+        @JvmStatic operator fun get(project: Project, name: String) = Pack(project, name)
     }
 }
