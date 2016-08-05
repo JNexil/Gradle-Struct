@@ -1,7 +1,6 @@
 package su.jfdev.gradle.service.util
 
 import org.gradle.api.*
-import su.jfdev.gradle.service.dependency.*
 import su.jfdev.gradle.service.describe.*
 
 infix fun PackDependency.extend(pack: PackDependency) = pack depend this

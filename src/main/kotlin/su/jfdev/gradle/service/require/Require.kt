@@ -12,6 +12,7 @@ class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
     fun service(vararg implementations: String) {
         source("api")
         source("main")
+        source("spec")
         test(*implementations)
     }
 
