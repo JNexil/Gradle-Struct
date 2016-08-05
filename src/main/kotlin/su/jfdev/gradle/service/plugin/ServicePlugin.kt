@@ -25,5 +25,5 @@ class ServicePlugin: Plugin<Project> {
         maybeCreate(it) depend maybeCreate("main") extend maybeCreate("test")
     }
 
-    private fun improveRequire() = project.extensions.create("require", RequireExtension::class.java, this)
+    private fun improveRequire() = project.extensions.create("require", RequireExtension::class.java, project)
 }
