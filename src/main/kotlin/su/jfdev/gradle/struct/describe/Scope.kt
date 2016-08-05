@@ -1,4 +1,4 @@
-package su.jfdev.gradle.service.describe
+package su.jfdev.gradle.struct.describe
 
 import org.gradle.api.tasks.*
 

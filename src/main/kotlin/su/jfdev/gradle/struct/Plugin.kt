@@ -1,10 +1,11 @@
-package su.jfdev.gradle.service.plugin
+package su.jfdev.gradle.struct
 
 import org.gradle.api.*
-import su.jfdev.gradle.service.describe.*
-import su.jfdev.gradle.service.require.*
+import org.gradle.api.Plugin
+import su.jfdev.gradle.struct.describe.*
+import su.jfdev.gradle.struct.require.*
 
-class ServicePlugin: Plugin<Project> {
+class Plugin: Plugin<Project> {
     private lateinit var project: Project
 
     override fun apply(project: Project) {
@@ -14,7 +15,7 @@ class ServicePlugin: Plugin<Project> {
         improveRequire()
     }
 
-    private fun improveDescribe() = container("describe"){
+    private fun improveDescribe() = container("describe") {
         Pack(project, it)
     }.apply {
         maybeCreate("api") extend maybeCreate("main")

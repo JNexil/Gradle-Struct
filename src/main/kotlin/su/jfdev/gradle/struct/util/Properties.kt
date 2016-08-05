@@ -1,4 +1,4 @@
-package su.jfdev.gradle.service.util
+package su.jfdev.gradle.struct.util
 
 import org.codehaus.groovy.runtime.InvokerHelper.*
 import org.gradle.api.*
