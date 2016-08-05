@@ -57,6 +57,5 @@ class ApplySpec extends ServiceSpec {
         receiver | target
         "api"    | []
         "main"   | ["api"]
-        "test"   | ["api", "main"]
     }
 }
