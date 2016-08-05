@@ -17,7 +17,7 @@ data class Pack(val project: Project, val name: String) {
     operator fun get(scope: Scope) = configurations[scope]!!
 
     companion object {
-        operator fun get(project: Project, name: String) = Pack(project, name).apply {
+        @JvmStatic operator fun get(project: Project, name: String) = Pack(project, name).apply {
             project.sourceSets.maybeCreate(name)
         }
     }
