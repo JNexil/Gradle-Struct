@@ -10,9 +10,9 @@ import kotlin.jvm.JvmOverloads as over
 class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
 
     fun template(vararg implementations: String) {
-        source("api")
-        source("main")
-        source("spec")
+        sources("api")
+        sources("main")
+        sources("spec")
         test(*implementations)
     }
 
