@@ -25,25 +25,17 @@ abstract class PackSpec extends ServiceSpec {
         def compile = pack.configurations.get COMPILE
 
         then:
-        runtime
-        compile
-
-        when:
-        def runtimeConfiguration = runtime.configuration
-        def compileConfiguration = compile.configuration
-
-        then:
-        runtimeConfiguration.name == "anySrcRuntime"
-        compileConfiguration.name == "anySrcCompile"
+        runtime.name == "anySrcRuntime"
+        compile.name == "anySrcCompile"
     }
 
-    static class NonCreatedAndNonDummy extends PackSpec {
+    static class NonCreated extends PackSpec {
         void setup() {
             pack = Pack.get(project, "anySrc")
         }
     }
 
-    static class CreatedAndNonDummy extends PackSpec {
+    static class Created extends PackSpec {
         void setup() {
             project.sourceSets.maybeCreate "anySrc"
             pack = Pack.get(project, "anySrc")

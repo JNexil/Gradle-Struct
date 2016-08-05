@@ -7,7 +7,6 @@ import su.jfdev.gradle.service.spec.ServiceSpec
 import static su.jfdev.gradle.service.describe.Scope.COMPILE
 import static su.jfdev.gradle.service.describe.Scope.RUNTIME
 import static su.jfdev.gradle.service.require.RequireSpec.ALL
-import static su.jfdev.gradle.service.util.Checking.getKnownConfigurations
 import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
 class ApplySpec extends ServiceSpec {
@@ -27,14 +26,11 @@ class ApplySpec extends ServiceSpec {
     }
 
     def "should contains configurations from given source"() {
-        given:
-        def checking = getKnownConfigurations(project)
-
         expect: "should contains runtime configuration"
-        RUNTIME[mainName] in checking
+        RUNTIME[project, mainName]
 
         and: "should contains compile configuration"
-        COMPILE[mainName] in checking
+        COMPILE[project, mainName]
 
         where:
         mainName << ["api", "main", "test"]

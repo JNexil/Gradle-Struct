@@ -1,6 +1,7 @@
 package su.jfdev.gradle.service.describe
 
 import org.gradle.api.*
+import org.gradle.api.artifacts.*
 import org.gradle.api.tasks.*
 import su.jfdev.gradle.service.util.*
 
@@ -8,8 +9,8 @@ data class Pack(val project: Project, val name: String) {
 
     val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
 
-    val configurations: Map<Scope, PackDependency> = Scope.values().associate {
-        it to PackDependency(this, it)
+    val configurations: Map<Scope, Configuration> = Scope.values().associate {
+        it to it[project, name]
     }
 
     @JvmName("getAt")
@@ -28,11 +29,15 @@ data class Pack(val project: Project, val name: String) {
     }
 
     fun extend(pack: Pack, scope: Scope): Pack = apply {
-        this[scope] extend pack[scope]
+        pack[scope] depend this[scope]
     }
 
     fun depend(pack: Pack, scope: Scope): Pack = apply {
         this[scope] depend pack[scope]
+    }
+
+    private infix fun Configuration.depend(configuration: Configuration) {
+        extendsFrom(configuration)
     }
 
     companion object {

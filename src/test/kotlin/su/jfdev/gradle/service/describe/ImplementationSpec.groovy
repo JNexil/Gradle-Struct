@@ -6,7 +6,6 @@ import su.jfdev.gradle.service.spec.ServiceSpec
 
 import static su.jfdev.gradle.service.describe.Scope.COMPILE
 import static su.jfdev.gradle.service.describe.Scope.RUNTIME
-import static su.jfdev.gradle.service.util.Checking.getKnownConfigurations
 import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
 class ImplementationSpec extends ServiceSpec {
@@ -37,20 +36,11 @@ class ImplementationSpec extends ServiceSpec {
 
     @Unroll
     def "should contains runtime and compile configurations to `#source`"() {
-        given:
-        def knownConfiguration = getKnownConfigurations(project)
+        expect: "should contains compile configurations"
+        COMPILE[project, source]
 
-        when: "should contains compile configurations"
-        String compile = COMPILE[source]
-
-        then:
-        compile in knownConfiguration
-
-        when: "should contains runtime configurations"
-        String runtime = RUNTIME[source]
-
-        then:
-        runtime in knownConfiguration
+        and: "should contains runtime configurations"
+        RUNTIME[project, source]
 
         where:
         source << ["impl", "alt"]

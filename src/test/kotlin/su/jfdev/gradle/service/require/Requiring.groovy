@@ -2,7 +2,7 @@ package su.jfdev.gradle.service.require
 
 import groovy.transform.ToString
 import org.gradle.api.Project
-import su.jfdev.gradle.service.describe.PackDependency
+import org.gradle.api.artifacts.Configuration
 import su.jfdev.gradle.service.describe.Pack
 import su.jfdev.gradle.service.describe.Scope
 
@@ -61,9 +61,7 @@ class Requiring {
         isRequired($receiver, $target)
     }
 
-    static boolean isRequired(PackDependency $receiver, PackDependency $target) {
-        $receiver.configuration.allDependencies.any {
-            $target.contentEquals(it) || (it instanceof PackDependency && isRequired(it, $receiver))
-        }
+    static boolean isRequired(Configuration receiver, Configuration target) {
+        target in receiver.hierarchy
     }
 }
