@@ -42,7 +42,7 @@ bintray {
         name = 'Gradle-Struct'
         userOrg = property("binuser")
         licenses = ['MIT']
-        vcsUrl = 'https://github.com/Jamefrus/ServicesGradle.git'
+        vcsUrl = 'https://github.com/Jamefrus/Gradle-Struct.git'
         version {
             name = project.version
             desc = 'Release with renaming'
