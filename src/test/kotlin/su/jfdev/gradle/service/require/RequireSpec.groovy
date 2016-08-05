@@ -19,7 +19,9 @@ class RequireSpec extends ServiceSpec {
                 addSubproject("target"),
                 addSubproject("receiver")
         )
-        project.service "impl"
+        project.subprojects {
+            service "impl"
+        }
     }
 
     @Unroll
@@ -28,38 +30,41 @@ class RequireSpec extends ServiceSpec {
         receiver.require.from(":target").compile source
         def exclusions = ALL - transitive - source
 
+        def requiring = requiring(scope: COMPILE, receiverSrc: source)
+
         expect:
-        isRequired(COMPILE, source)
+        requiring.isRequired()
 
-        and:
-        assertNonRequired(COMPILE, source, exclusions)
+        when:
+        requiring = requiring.with(receiver: target)
 
-        and:
-        assertRequired(COMPILE, source, transitive)
+        then:
+        requiring.assertNonRequired(exclusions)
+        requiring.assertRequired(transitive)
 
         where:
         source | transitive
         "api"  | []
         "main" | ["api"]
         "impl" | ["api", "main"]
-        "spec" | ["api", "main"]
-        "test" | ["api", "main", "spec", "impl"]
+        "test" | ["api", "main", "impl"]
     }
 
     @Unroll
     def "should when add service, add `#source` to `#to`"() {
         given:
-        receiver.require.service ":target"
+        receiver.require.from(":target").service "impl"
 
-        expect:
-        isRequired(COMPILE, to, source)
+        when:
+        def request = requiring(scope: COMPILE, receiverSrc: to, targetSrc: source)
+        then:
+        request.isRequired()
 
         where:
         source | to
         "api"  | "api"
         "main" | "main"
         "impl" | "test"
-        "spec" | "spec"
     }
 
 
