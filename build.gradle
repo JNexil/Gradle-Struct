@@ -16,7 +16,7 @@ apply plugin: 'kotlin'
 apply plugin: 'groovy'
 
 group 'su.jfdev.gradle.struct'
-version '1.0.0b'
+version '1.0.1b'
 
 repositories {
     jcenter()
@@ -45,7 +45,7 @@ bintray {
         vcsUrl = 'https://github.com/Jamefrus/Gradle-Struct.git'
         version {
             name = project.version
-            desc = 'Release with renaming'
+            desc = '`Spec` requiring cut'
             released = new Date()
             vcsTag = project.version
         }

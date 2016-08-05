@@ -12,7 +12,6 @@ class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
     fun template(vararg implementations: String) {
         sources("api")
         sources("main")
-        sources("spec")
         test(*implementations)
     }
 
