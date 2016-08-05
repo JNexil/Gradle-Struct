@@ -1,8 +1,8 @@
-package su.jfdev.gradle.service.describe
+package su.jfdev.gradle.service.apply
 
 import su.jfdev.gradle.service.plugin.ServicePlugin
 
-class MultiProjectComponentsSpec extends ComponentsSpec {
+class MultiProjectApplySpec extends ApplySpec {
     @Override
     void setup() {
         def parent = project

@@ -1,4 +1,4 @@
-package su.jfdev.gradle.service.describe
+package su.jfdev.gradle.service.apply
 
 import org.gradle.api.Project
 import spock.lang.Unroll
@@ -10,7 +10,7 @@ import static su.jfdev.gradle.service.require.RequireSpec.ALL
 import static su.jfdev.gradle.service.util.Checking.getKnownConfigurations
 import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
-class ComponentsSpec extends ServiceSpec {
+class ApplySpec extends ServiceSpec {
     Project getTarget() { project }
 
     Project getReceiver() { project }
