@@ -11,9 +11,9 @@ import static su.jfdev.gradle.service.util.Checking.getKnownConfigurations
 import static su.jfdev.gradle.service.util.Checking.getKnownSources
 
 class ComponentsSpec extends ServiceSpec {
-    protected Project getTarget() { project }
+    Project getTarget() { project }
 
-    protected Project getReceiver() { project }
+    Project getReceiver() { project }
 
     def "should contains default sources"() {
         when:
@@ -44,12 +44,13 @@ class ComponentsSpec extends ServiceSpec {
     def "should has hierarchy: #receiver <- #target, but not reverse"() {
         given:
         def exclusions = ALL - target - receiver
+        def requiring = requiring(scope: COMPILE, receiverSrc: receiver)
 
         expect:
-        assertNonRequired(COMPILE, receiver, exclusions)
+        requiring.assertNonRequired(exclusions)
 
         and:
-        assertRequired(COMPILE, receiver, target)
+        requiring.assertRequired(target)
 
 
         where:
