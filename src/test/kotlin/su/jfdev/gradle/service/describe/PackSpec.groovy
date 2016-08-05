@@ -1,44 +1,112 @@
 package su.jfdev.gradle.service.describe
 
 import org.gradle.api.Project
-import su.jfdev.gradle.service.spec.ServiceSpec
+import spock.lang.Unroll
+import su.jfdev.gradle.service.spec.PluginSpec
+import su.jfdev.gradle.struct.describe.Pack
+import su.jfdev.gradle.struct.describe.PackDependency
+import su.jfdev.gradle.struct.describe.Scope
 
-import static su.jfdev.gradle.service.describe.Scope.COMPILE
-import static su.jfdev.gradle.service.describe.Scope.RUNTIME
+class PackSpec extends PluginSpec {
+    public static final String NAME = "anySrc"
+    public static final String RUNTIME = NAME + "Runtime"
+    public static final String COMPILE = NAME + "Compile"
 
-abstract class PackSpec extends ServiceSpec {
+    void setup() {
+        pack = new Pack(project, NAME)
+    }
 
     Project getTarget() { project }
-
     Project getReceiver() { project }
-
     Pack pack
 
-    def "should create configuration"() {
+
+    def "should create sourceSet with pack's name"() {
+        when:
+        def source = pack.sourceSet
+        then:
+        source
+        source.name
+    }
+
+    def "should create configurations"() {
         expect:
-        pack.sourceSet
-        pack.name == "anySrc"
+        pack.name == NAME
         pack.project == project
 
         when:
-        def runtime = pack.get RUNTIME
-        def compile = pack.get COMPILE
+        def configurations = project.configurations
 
         then:
-        runtime.name == "anySrcRuntime"
-        compile.name == "anySrcCompile"
+        configurations.findByName RUNTIME
+        configurations.findByName COMPILE
     }
 
-    static class NonCreated extends PackSpec {
-        void setup() {
-            pack = new Pack(project, "anySrc")
-        }
+    @Unroll
+    def "should depend pack to pack with scope: #scope"() {
+        given:
+        def target = new Pack(project, "target")
+
+        when:
+        pack.depend(target)
+
+        and:
+        def anyConf = project.configurations["anySrc" + scopeSuffix]
+        def targetDependency = new PackDependency(scope, target)
+
+        then:
+        targetDependency in anyConf.dependencies
+
+        where:
+        scope         | scopeSuffix
+        Scope.RUNTIME | "Runtime"
+        Scope.COMPILE | "Compile"
     }
 
-    static class Created extends PackSpec {
-        void setup() {
-            project.sourceSets.maybeCreate "anySrc"
-            pack = new Pack(project, "anySrc")
-        }
+    @Unroll
+    def "should extend pack to pack with scope: #scope"() {
+        given:
+        def target = new Pack(project, "target")
+
+        when:
+        target.extend(pack)
+
+        and:
+        def anyConf = project.configurations["anySrc" + scopeSuffix]
+        def targetDependency = new PackDependency(scope, target)
+
+        then:
+        targetDependency in anyConf.dependencies
+
+        where:
+        scope         | scopeSuffix
+        Scope.RUNTIME | "Runtime"
+        Scope.COMPILE | "Compile"
+    }
+
+    @Unroll
+    def "should extend pack to pack with scope: `#active` but not `#exclusion`"() {
+        given:
+        def target = new Pack(project, "target")
+        target.extend(pack, active)
+
+        when:
+        def anyConf = project.configurations["anySrc" + scopeSuffix]
+        def targetDependency = new PackDependency(active, target)
+
+        then:
+        targetDependency in anyConf.dependencies
+
+        when:
+        def disabledConf = project.configurations["anySrc" + exclusionSuffix]
+        def disabledTarget = new PackDependency(active, target)
+
+        then:
+        !(disabledTarget in disabledConf.dependencies)
+
+        where:
+        active        | scopeSuffix | exclusion     | exclusionSuffix
+        Scope.RUNTIME | "Runtime"   | Scope.COMPILE | "Compile"
+        Scope.COMPILE | "Compile"   | Scope.RUNTIME | "Runtime"
     }
 }

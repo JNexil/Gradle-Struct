@@ -2,21 +2,16 @@ package su.jfdev.gradle.service.apply
 
 import org.gradle.api.Project
 import spock.lang.Unroll
-import su.jfdev.gradle.service.spec.ServiceSpec
+import su.jfdev.gradle.service.spec.PluginSpec
 
-import static su.jfdev.gradle.service.describe.Scope.COMPILE
-import static su.jfdev.gradle.service.describe.Scope.RUNTIME
-import static su.jfdev.gradle.service.require.RequireSpec.ALL
-import static su.jfdev.gradle.service.util.Checking.getKnownSources
-
-class ApplySpec extends ServiceSpec {
+class ApplySpec extends PluginSpec {
     Project getTarget() { project }
 
     Project getReceiver() { project }
 
     def "should contains default sources"() {
         when:
-        def known = getKnownSources(project)
+        def known = project.sourceSets.names
 
         then:
         source in known
@@ -26,32 +21,32 @@ class ApplySpec extends ServiceSpec {
     }
 
     def "should contains configurations from given source"() {
-        expect: "should contains runtime configuration"
-        RUNTIME[project, mainName]
+        given:
+        def knownConfigurations = project.configurations.getNames()
 
-        and: "should contains compile configuration"
-        COMPILE[project, mainName]
+        when: "should contains compile configurations"
+        def compile = source + "Compile"
+        if (source == "main") compile = "compile"
+        then:
+        compile in knownConfigurations
+
+        when: "should contains runtime configurations"
+        def runtime = source + "Runtime"
+        if (source == "main") runtime = "runtime"
+        then:
+        runtime in knownConfigurations
 
         where:
-        mainName << ["api", "main", "test"]
+        source << ["api", "main", "test"]
     }
 
     @Unroll
-    def "should has hierarchy: #receiver <- #target, but not reverse"() {
-        given:
-        def exclusions = ALL - target - receiver
-        def requiring = requiring(scope: COMPILE, receiverSrc: receiver)
-
+    def "should has hierarchy: [#receiver] <- [#target]"() {
         expect:
-        requiring.assertNonRequired(exclusions)
-
-        and:
-        requiring.assertRequired(target)
-
+        assertRequired(receiver, target)
 
         where:
         receiver | target
-        "api"    | []
-        "main"   | ["api"]
+        "main"   | "api"
     }
 }

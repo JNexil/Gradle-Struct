@@ -2,13 +2,9 @@ package su.jfdev.gradle.service.describe
 
 import org.gradle.api.Project
 import spock.lang.Unroll
-import su.jfdev.gradle.service.spec.ServiceSpec
+import su.jfdev.gradle.service.spec.PluginSpec
 
-import static su.jfdev.gradle.service.describe.Scope.COMPILE
-import static su.jfdev.gradle.service.describe.Scope.RUNTIME
-import static su.jfdev.gradle.service.util.Checking.getKnownSources
-
-class ImplementationSpec extends ServiceSpec {
+class ImplementationSpec extends PluginSpec {
 
     Project getTarget() { project }
 
@@ -25,7 +21,7 @@ class ImplementationSpec extends ServiceSpec {
     @Unroll
     def "should contains source set `#source`"() {
         when:
-        def knownSources = getKnownSources(project)
+        def knownSources = project.sourceSets.names
 
         then:
         source in knownSources
@@ -36,11 +32,14 @@ class ImplementationSpec extends ServiceSpec {
 
     @Unroll
     def "should contains runtime and compile configurations to `#source`"() {
+        given:
+        def knownConfigurations = project.configurations.getNames()
+
         expect: "should contains compile configurations"
-        COMPILE[project, source]
+        (source + "Compile") in knownConfigurations
 
         and: "should contains runtime configurations"
-        RUNTIME[project, source]
+        (source + "Runtime") in knownConfigurations
 
         where:
         source << ["impl", "alt"]
@@ -48,18 +47,8 @@ class ImplementationSpec extends ServiceSpec {
 
     @Unroll
     def "should has hierarchy: [#target] <- [#receiver]"() {
-        when:
-        def requiring = requiring(scope: COMPILE, receiverSrc: receiver, targetSrc: target)
-
-        then: "compile"
-        requiring.isRequired()
-
-        when:
-        requiring = requiring.with(scope: RUNTIME)
-
-        then:
-        requiring.isRequired()
-
+        expect:
+        assertRequired(receiver, target)
 
         where:
         receiver | target

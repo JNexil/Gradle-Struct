@@ -2,20 +2,17 @@ package su.jfdev.gradle.service.require
 
 import org.gradle.api.Project
 import spock.lang.Unroll
-import su.jfdev.gradle.service.spec.ServiceSpec
+import su.jfdev.gradle.service.spec.PluginSpec
 
-import static su.jfdev.gradle.service.describe.Scope.COMPILE
-
-class RequireSpec extends ServiceSpec {
+class RequireSpec extends PluginSpec {
     public static final ALL = ["api", "main", "impl", "spec", "test"]
 
-    Project getTarget() { project.project(":target") }
+    protected Project getTarget() { project.project(":target") }
 
-    Project getReceiver() { project.project(":receiver") }
+    protected Project getReceiver() { project.project(":receiver") }
 
-    @Override
     void setup() {
-        serviceTo(
+        applyTo(
                 addSubproject("target"),
                 addSubproject("receiver")
         )
@@ -27,40 +24,24 @@ class RequireSpec extends ServiceSpec {
     }
 
     @Unroll
-    def "should add `#source` with #transitive"() {
+    def "should add `#source`"() {
         given:
-        receiver.require.from(":target").compile source
-        def exclusions = ALL - transitive - source
-
-        def requiring = requiring(scope: COMPILE, receiverSrc: source)
+        receiver.require.from(":target").sources source
 
         expect:
-        requiring.isRequired()
-
-        when:
-        requiring = requiring.with(receiver: target)
-
-        then:
-        requiring.assertNonRequired(exclusions)
-        requiring.assertRequired(transitive)
+        assertRequired(source)
 
         where:
-        source | transitive
-        "api"  | []
-        "main" | ["api"]
-        "impl" | ["api", "main"]
-        "test" | ["api", "main", "impl"]
+        source << ["api", "main", "impl", "test"]
     }
 
     @Unroll
-    def "should when add service, add `#source` to `#to`"() {
+    def "should when add template, add `#source` to `#to`"() {
         given:
-        receiver.require.from(":target").service "impl"
+        receiver.require.from(":target").template "impl"
 
-        when:
-        def request = requiring(scope: COMPILE, receiverSrc: to, targetSrc: source)
-        then:
-        request.isRequired()
+        expect:
+        assertRequired(to, source)
 
         where:
         source | to
@@ -68,6 +49,5 @@ class RequireSpec extends ServiceSpec {
         "main" | "main"
         "impl" | "test"
     }
-
 
 }
