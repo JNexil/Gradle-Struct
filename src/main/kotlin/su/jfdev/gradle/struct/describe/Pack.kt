@@ -29,7 +29,7 @@ data class Pack(val project: Project, val name: String) {
         this[scope].dependencies += PackDependency(scope, pack)
     }
 
-    internal operator fun get(scope: Scope): Configuration {
+    operator fun get(scope: Scope): Configuration {
         val name = scope.nameExtractor(sourceSet)
         return project.configurations.getByName(name)
     }
