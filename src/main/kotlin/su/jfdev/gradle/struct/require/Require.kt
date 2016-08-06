@@ -5,22 +5,15 @@ import org.gradle.api.*
 import su.jfdev.gradle.struct.describe.*
 import su.jfdev.gradle.struct.describe.Scope.*
 import su.jfdev.gradle.struct.util.*
-import java.util.*
 import kotlin.jvm.JvmOverloads as over
 
 class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
-    val inherited: MutableCollection<String> = ArrayList()
-
     fun inherit(vararg implementations: String) {
+        runtime("test")
         template(*implementations)
-        val ext = receiver.extensions.getByType(RequireExtension::class.java)
-        for (require in ext.required) for (inherit in require.inherited) {
-            test(inherit)
-        }
     }
 
     fun template(vararg implementations: String) {
-        inherited += implementations
         sources("api")
         sources("main")
         test(*implementations)
