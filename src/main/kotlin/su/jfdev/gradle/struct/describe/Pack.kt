@@ -3,6 +3,7 @@ package su.jfdev.gradle.struct.describe
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.tasks.*
+import org.gradle.jvm.tasks.*
 import su.jfdev.gradle.struct.util.*
 
 data class Pack(val project: Project, val name: String) {
@@ -34,4 +35,11 @@ data class Pack(val project: Project, val name: String) {
         return project.configurations.getByName(name)
     }
 
+    fun archive(name: String = this.name): Pack = apply {
+        val task = project.tasks.maybeCreate(this.name + "Jar", Jar::class.java).apply {
+            classifier = name
+            from(sourceSet.output)
+        }
+        project.artifacts.add("archives", task)
+    }
 }
