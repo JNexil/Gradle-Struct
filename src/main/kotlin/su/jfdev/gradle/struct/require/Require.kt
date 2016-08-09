@@ -7,7 +7,7 @@ import su.jfdev.gradle.struct.describe.Scope.*
 import su.jfdev.gradle.struct.util.*
 import kotlin.jvm.JvmOverloads as over
 
-class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
+class Require(val receiver: Project, val target: Requirement): Closure<Any>(Unit) {
     fun inherit(vararg implementations: String) {
         runtime("test")
         template(*implementations)
@@ -33,20 +33,20 @@ class Require(val receiver: Project, val target: Project): Closure<Any>(Unit) {
     @over fun runtime(name: String, to: String = name) = source(name, to, RUNTIME)
 
     @over fun source(name: String, to: String = name, scope: Scope = COMPILE) {
-        val target = target[name]
         val receiver = receiver[to]
-        receiver.depend(target, scope)
+        target require Request(receiver, name, scope)
     }
 
     @over fun sources(name: String, to: String = name) {
-        val target = target[name]
         val receiver = receiver[to]
-        receiver depend target
+        target require Request(receiver, name)
     }
 
-    fun doCall(function: Closure<*>){
+    infix fun doCall(function: Closure<*>){
         val closure = function.clone() as Closure<*>
         closure.delegate = this
         closure.call()
     }
+
+    data class Request(val receiver: Pack, val target: String, val scope: Scope? = null)
 }
