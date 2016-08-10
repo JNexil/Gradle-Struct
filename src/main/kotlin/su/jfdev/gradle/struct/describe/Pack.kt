@@ -40,16 +40,6 @@ data class Pack private constructor(val project: Project, val sourceSet: SourceS
         return project.configurations.getByName(name)
     }
 
-    infix fun resourcesTo(pack: Pack): Pack = apply {
-        pack resourcesFrom this
-    }
-
-    infix fun resourcesFrom(pack: Pack): Pack = apply {
-        val receiver = sourceSet.resources
-        val target = pack.sourceSet.resources
-        receiver.add(target)
-    }
-
     fun archive(name: String = this.name): Pack = apply {
         val task = project.tasks.maybeCreate(this.name + "Jar", Jar::class.java).apply {
             classifier = name

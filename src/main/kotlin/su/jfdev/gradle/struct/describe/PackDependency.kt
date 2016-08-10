@@ -13,8 +13,11 @@ data class PackDependency(val scope: Scope, val pack: Pack): Dependency, Resolva
 
     override fun contentEquals(other: Dependency) = equals(other)
 
-    override fun resolve(ctx: DependencyResolveContext) = ctx.run {
-        if(isTransitive) add(pack[scope])
-        add(pack.sourceSet.output)
+    override fun resolve(ctx: DependencyResolveContext) = pack.sourceSet.run {
+        if(ctx.isTransitive) ctx += pack[scope]
+        ctx += output
+        ctx += resources
     }
+
+    operator fun DependencyResolveContext.plusAssign(any: Any) = add(any)
 }

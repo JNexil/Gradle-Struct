@@ -18,11 +18,11 @@ class Plugin: Plugin<Project> {
     private fun improveDescribe() = container("describe") {
         Pack(project, it)
     }.apply {
-        this["main"] extend this["api"] resourcesTo this["test"]
+        this["main"] extend this["api"]
     }
 
     private fun NamedDomainObjectContainer<Pack>.improveImplementations() = container("implementations") {
-        this[it] depend this["main"] extend this["test"] resourcesTo this["test"]
+        this[it] depend this["main"] extend this["test"]
     }
 
     private operator fun NamedDomainObjectContainer<Pack>.get(name: String) = maybeCreate(name)
