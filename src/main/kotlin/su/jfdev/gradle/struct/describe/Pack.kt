@@ -10,8 +10,8 @@ import su.jfdev.gradle.struct.util.*
 
 data class Pack private constructor(val project: Project, val sourceSet: SourceSet) {
 
-    constructor(project: Project, name: String, create: Boolean = true): this(project,
-                                                                              project.sourceSets[name, create])
+    @JvmOverloads
+    constructor(project: Project, name: String, create: Boolean = true): this(project, project.sourceSets[name, create])
 
     val name: String get() = sourceSet.name
 
