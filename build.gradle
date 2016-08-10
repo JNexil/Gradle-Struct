@@ -16,7 +16,7 @@ apply plugin: 'kotlin'
 apply plugin: 'groovy'
 
 group 'su.jfdev.gradle.struct'
-version '1.3.2'
+version '1.3.3'
 
 repositories {
     jcenter()

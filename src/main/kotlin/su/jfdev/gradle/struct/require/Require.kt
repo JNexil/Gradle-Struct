@@ -42,14 +42,5 @@ class Require(val receiver: Project, val target: Requirement): Closure<Any>(Unit
         target require Request(receiver, name)
     }
 
-    infix fun doCall(function: Closure<*>) = apply {
-        val closure = function.clone() as Closure<*>
-		closure.apply {
-			delegate = this
-			resolveStrategy = Closure.DELEGATE_FIRST
-			call()
-		}
-    }
-
     data class Request(val receiver: Pack, val target: String, val scope: Scope? = null)
 }

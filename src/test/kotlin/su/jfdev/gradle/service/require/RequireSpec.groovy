@@ -26,7 +26,9 @@ class RequireSpec extends PluginSpec {
     @Unroll
     def "should add `#source`"() {
         given:
-        receiver.require.from(":target").sources source
+        receiver.require.from(":target"){
+            sources source
+        }
 
         expect:
         assertRequired(source)
