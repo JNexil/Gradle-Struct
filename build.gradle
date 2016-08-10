@@ -45,7 +45,7 @@ bintray {
         vcsUrl = 'https://github.com/Jamefrus/Gradle-Struct.git'
         version {
             name = project.version
-            desc = 'Maven-publish support'
+            desc = 'Fixed configuring'
             released = new Date()
             vcsTag = project.version
         }
