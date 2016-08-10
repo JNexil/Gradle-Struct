@@ -8,9 +8,12 @@ import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.*
 import su.jfdev.gradle.struct.util.*
 
-data class Pack(val project: Project, val name: String) {
+data class Pack private constructor(val project: Project, val sourceSet: SourceSet) {
 
-    val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
+    constructor(project: Project, name: String, create: Boolean = true): this(project,
+                                                                              project.sourceSets[name, create])
+
+    val name: String get() = sourceSet.name
 
     infix fun extend(pack: Pack): Pack = eachScope {
         extend(pack, it)
@@ -37,6 +40,16 @@ data class Pack(val project: Project, val name: String) {
         return project.configurations.getByName(name)
     }
 
+    infix fun resourcesTo(pack: Pack): Pack = apply {
+        pack resourcesFrom this
+    }
+
+    infix fun resourcesFrom(pack: Pack): Pack = apply {
+        val receiver = sourceSet.resources
+        val target = pack.sourceSet.resources
+        receiver.add(target)
+    }
+
     fun archive(name: String = this.name): Pack = apply {
         val task = project.tasks.maybeCreate(this.name + "Jar", Jar::class.java).apply {
             classifier = name
@@ -48,5 +61,13 @@ data class Pack(val project: Project, val name: String) {
             }
         }
         project.artifacts.add("archives", task)
+    }
+
+    private companion object {
+        private operator fun SourceSetContainer.get(name: String, create: Boolean) = when {
+            create        -> maybeCreate(name)
+            name in names -> getByName(name)
+            else          -> error("Source set $name !in $this")
+        }
     }
 }

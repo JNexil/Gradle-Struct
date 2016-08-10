@@ -20,7 +20,7 @@ sealed class Requirement {
     class Module(val project: Project): Requirement() {
         override fun require(request: Request) {
             val (receiver, target, scope) = request
-            val _target = project[target]
+            val _target = project.get(target, create = false)
             when (scope) {
                 null -> receiver depend _target
                 else -> receiver.depend(_target, scope)
