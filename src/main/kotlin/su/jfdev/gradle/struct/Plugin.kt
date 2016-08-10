@@ -18,7 +18,7 @@ class Plugin: Plugin<Project> {
     private fun improveDescribe() = container("describe") {
         Pack(project, it)
     }.apply {
-        this["main"] extend this["api"]
+        this["main"] depend this["api"]
     }
 
     private fun NamedDomainObjectContainer<Pack>.improveImplementations() = container("implementations") {
