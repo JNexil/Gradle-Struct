@@ -8,12 +8,9 @@ import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.*
 import su.jfdev.gradle.struct.util.*
 
-data class Pack private constructor(val project: Project, val sourceSet: SourceSet) {
+data class Pack(val project: Project, val name: String) {
 
-    @JvmOverloads
-    constructor(project: Project, name: String, create: Boolean = true): this(project, project.sourceSets[name, create])
-
-    val name: String get() = sourceSet.name
+    val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
 
     infix fun extend(pack: Pack): Pack = eachScope {
         extend(pack, it)
@@ -51,13 +48,5 @@ data class Pack private constructor(val project: Project, val sourceSet: SourceS
             }
         }
         project.artifacts.add("archives", task)
-    }
-
-    private companion object {
-        private operator fun SourceSetContainer.get(name: String, create: Boolean) = when {
-            create        -> maybeCreate(name)
-            name in names -> getByName(name)
-            else          -> error("Source set $name !in $this")
-        }
     }
 }
