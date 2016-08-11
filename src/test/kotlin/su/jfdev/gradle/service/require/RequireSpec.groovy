@@ -52,4 +52,25 @@ class RequireSpec extends PluginSpec {
         "impl" | "test"
     }
 
+    def "should late depend, when source set is not exist"() {
+        given:
+        receiver.require.from(":target"){
+            sources "yetUnknown", "main"
+        }
+
+        def targetConfigurations = target.project.configurations
+
+        expect:
+        !targetConfigurations.findByName("yetUnknownCompile")
+
+        when:
+        target.describe {
+            yetUnknown
+        }
+        then:
+        targetConfigurations.findByName("yetUnknownCompile")
+
+        and:
+        assertRequired "main", "yetUnknown"
+    }
 }

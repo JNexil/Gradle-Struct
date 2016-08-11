@@ -18,9 +18,20 @@ sealed class Requirement {
     }
 
     class Module(val project: Project): Requirement() {
-        override fun require(request: Request) {
-            val (receiver, target, scope) = request
-            require(target in project.sourceSets.names) { "Unknown target source set $target" }
+        override fun require(request: Request) = request.run {
+            when (target) {
+                in project.sourceSets.names -> depend()
+                else                        -> lateDepend()
+            }
+        }
+
+        private fun Request.lateDepend() {
+            project.sourceSets.whenObjectAdded {
+                if (it.name == target) depend()
+            }
+        }
+
+        private fun Request.depend() {
             val _target = project[target]
             when (scope) {
                 null -> receiver depend _target
