@@ -14,6 +14,7 @@ plugins {
 
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
+apply plugin: 'maven'
 
 group 'su.jfdev.gradle.struct'
 version '1.4.4'
@@ -31,6 +32,16 @@ dependencies {
             'com.netflix.nebula:nebula-test:latest.release'
 
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.5.2'
+}
+
+install {
+    repositories {
+        mavenInstaller {
+            pom.groupId = group
+            pom.version = version
+            pom.artifactId = "gradle-struct"
+        }
+    }
 }
 
 bintray {
