@@ -55,4 +55,6 @@ data class Pack(val project: Project, val name: String) {
         }
         project.artifacts.add("archives", task)
     }
+
+    var includeResources: Boolean = false
 }

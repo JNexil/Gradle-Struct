@@ -19,6 +19,7 @@ class Plugin: Plugin<Project> {
         Pack(project, it)
     }.apply {
         this["main"] depend this["api"]
+        this["test"].includeResources = true
     }
 
     private fun NamedDomainObjectContainer<Pack>.improveImplementations() = container("implementations") {
