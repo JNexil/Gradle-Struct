@@ -2,6 +2,7 @@ package su.jfdev.gradle.struct.describe
 
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
+import org.gradle.api.file.*
 import org.gradle.api.publish.*
 import org.gradle.api.publish.maven.*
 import org.gradle.api.tasks.*
@@ -29,13 +30,18 @@ data class Pack(val project: Project, val name: String) {
     }
 
     fun depend(pack: Pack, scope: Scope): Pack = apply {
-        this[scope].dependencies += PackDependency(scope, pack)
+        scope.configuration.dependencies += PackDependency(scope, pack)
+        scope.classpath += pack.sourceSet.output
     }
 
-    operator fun get(scope: Scope): Configuration {
-        val name = scope.nameExtractor(sourceSet)
-        return project.configurations.getByName(name)
-    }
+    operator fun get(scope: Scope) = scope.configuration
+
+    private val Scope.configuration: Configuration
+        get() = project.configurations.getByName(sourceSet.getConfiguration())
+
+    private var Scope.classpath: FileCollection
+        get() = sourceSet.getClasspath()
+        set(value) = sourceSet.setClasspath(value)
 
     fun archive(name: String = this.name): Pack = apply {
         val task = project.tasks.maybeCreate(this.name + "Jar", Jar::class.java).apply {
