@@ -1,6 +1,6 @@
 package su.jfdev.gradle.service.apply
 
-import su.jfdev.gradle.struct.plugins.StructPlugin
+import su.jfdev.gradle.struct.StructPlugin
 
 class MultiProjectApplySpec extends ApplySpec {
     @Override

@@ -3,7 +3,7 @@ package su.jfdev.gradle.service.spec
 import nebula.test.ProjectSpec
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import su.jfdev.gradle.struct.plugins.StructPlugin
+import su.jfdev.gradle.struct.StructPlugin
 import su.jfdev.gradle.struct.describe.Pack
 import su.jfdev.gradle.struct.describe.PackDependency
 import su.jfdev.gradle.struct.describe.Scope

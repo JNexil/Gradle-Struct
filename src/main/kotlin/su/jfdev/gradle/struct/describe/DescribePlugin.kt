@@ -1,4 +1,4 @@
-package su.jfdev.gradle.struct.plugins
+package su.jfdev.gradle.struct.describe
 
 import org.gradle.api.*
 import su.jfdev.gradle.struct.describe.*

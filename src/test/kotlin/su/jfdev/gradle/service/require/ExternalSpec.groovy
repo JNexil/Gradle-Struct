@@ -1,7 +1,7 @@
 package su.jfdev.gradle.service.require
 
 import nebula.test.ProjectSpec
-import su.jfdev.gradle.struct.plugins.StructPlugin
+import su.jfdev.gradle.struct.StructPlugin
 
 class ExternalSpec extends ProjectSpec {
     void setup() {
