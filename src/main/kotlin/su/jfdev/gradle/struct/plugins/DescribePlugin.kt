@@ -1,18 +1,15 @@
-package su.jfdev.gradle.struct
+package su.jfdev.gradle.struct.plugins
 
 import org.gradle.api.*
-import org.gradle.api.Plugin
 import su.jfdev.gradle.struct.describe.*
-import su.jfdev.gradle.struct.require.*
+import su.jfdev.gradle.struct.plugins.*
 
-class Plugin: Plugin<Project> {
+class DescribePlugin: Plugin<Project> {
     private lateinit var project: Project
 
     override fun apply(project: Project) {
         this.project = project
-        project.plugins.apply("java")
         improveDescribe().improveImplementations()
-        improveRequire()
     }
 
     private fun improveDescribe() = container("describe") {
@@ -28,10 +25,7 @@ class Plugin: Plugin<Project> {
 
     private operator fun NamedDomainObjectContainer<Pack>.get(name: String) = maybeCreate(name)
 
-    private fun container(name: String, factory: (String) -> Pack)
-            = project.container(Pack::class.java, NamedDomainObjectFactory(factory)).apply {
-        project.extensions.add(name, this)
-    }
-
-    private fun improveRequire() = project.extensions.create("require", RequireExtension::class.java, project)
+    private fun container(name: String, factory: (String) -> Pack) = project
+            .container(Pack::class.java, NamedDomainObjectFactory(factory))
+            .apply { project.extensions.add(name, this) }
 }
