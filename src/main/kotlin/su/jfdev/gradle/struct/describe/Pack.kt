@@ -3,13 +3,13 @@ package su.jfdev.gradle.struct.describe
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.file.*
-import org.gradle.api.publish.*
-import org.gradle.api.publish.maven.*
 import org.gradle.api.tasks.*
-import org.gradle.jvm.tasks.*
 import su.jfdev.gradle.struct.util.*
 
 data class Pack(val project: Project, val name: String) {
+
+    var includeResources: Boolean = false
+    var archive: String? = null
 
     val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
 
@@ -43,18 +43,7 @@ data class Pack(val project: Project, val name: String) {
         get() = sourceSet.getClasspath()
         set(value) = sourceSet.setClasspath(value)
 
-    fun archive(name: String = this.name): Pack = apply {
-        val task = project.tasks.maybeCreate(this.name + "Jar", Jar::class.java).apply {
-            classifier = name
-            from(sourceSet.output)
-        }
-        project.onlyWith<PublishingExtension> {
-            publications.maybeCreate("general", MavenPublication::class.java).apply {
-                artifact(task)
-            }
-        }
-        project.artifacts.add("archives", task)
+    fun archive(name: String): Pack = apply {
+        archive = name
     }
-
-    var includeResources: Boolean = false
 }
