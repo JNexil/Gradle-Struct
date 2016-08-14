@@ -1,6 +1,6 @@
 package su.jfdev.gradle.service.apply
 
-import su.jfdev.gradle.struct.Plugin
+import su.jfdev.gradle.struct.plugins.StructPlugin
 
 class MultiProjectApplySpec extends ApplySpec {
     @Override
@@ -8,7 +8,7 @@ class MultiProjectApplySpec extends ApplySpec {
         def parent = project
         project = addSubproject("sub")
         parent.subprojects {
-            apply plugin: Plugin
+            apply plugin: StructPlugin
         }
     }
 }

@@ -3,7 +3,7 @@ package su.jfdev.gradle.service.spec
 import nebula.test.ProjectSpec
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import su.jfdev.gradle.struct.Plugin
+import su.jfdev.gradle.struct.plugins.StructPlugin
 import su.jfdev.gradle.struct.describe.Pack
 import su.jfdev.gradle.struct.describe.PackDependency
 import su.jfdev.gradle.struct.describe.Scope
@@ -18,7 +18,7 @@ abstract class PluginSpec extends ProjectSpec {
     }
 
     void applyTo(Project... projects) {
-        for (project in projects) project.plugins.apply(Plugin)
+        for (project in projects) project.plugins.apply(StructPlugin)
     }
 
     void assertRequired(String receiver, String target = receiver) {
