@@ -1,8 +1,6 @@
 package su.jfdev.gradle.struct.describe
 
 import org.gradle.api.*
-import su.jfdev.gradle.struct.describe.*
-import su.jfdev.gradle.struct.plugins.*
 
 class DescribePlugin: Plugin<Project> {
     private lateinit var project: Project
