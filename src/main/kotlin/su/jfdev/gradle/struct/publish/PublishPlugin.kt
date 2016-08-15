@@ -1,68 +1,76 @@
 package su.jfdev.gradle.struct.publish
 
 import org.gradle.api.*
+import org.gradle.api.artifacts.*
 import org.gradle.api.publish.*
 import org.gradle.api.publish.maven.*
+import org.gradle.api.publish.maven.plugins.*
 import org.gradle.api.tasks.bundling.*
 import su.jfdev.gradle.struct.describe.*
 import su.jfdev.gradle.struct.util.*
 import java.util.*
 
 class PublishPlugin: Plugin<Project> {
-    lateinit var project: Project
-    val archives: Iterable<String> = Archives()
+
+    val archives: MutableList<String> = ArrayList()
 
     override fun apply(project: Project) {
-        this.project = project
-        project.extensions.add("structArchives", archives)
-    }
-
-    private val Pack.toArchive: String? get() {
-        project.onlyWith<PublishingExtension>("publishing") {
-            return publications publish this@toArchive
+        project.run {
+            extensions.extraProperties["described"] = archives
+            plugins.apply(MavenPublishPlugin::class.java)
+            plugins.apply(DescribePlugin::class.java)
+            publishPacks()
         }
-        return null
     }
-
-    private infix fun PublicationContainer.publish(pack: Pack): String? {
-        val archive = pack.archive ?: return null
-        return publish(archive, pack).name
-    }
-
-    private fun PublicationContainer.publish(archive: String, pack: Pack): MavenPublication
-            = maybeCreate(archive, MavenPublication::class.java)
-            .apply { configure(archive, pack) }
-
-    private fun MavenPublication.configure(archive: String, pack: Pack) {
-        artifactId = archive
-        groupId = project.group.toString()
-        version = project.version.toString()
-
-        artifact(pack toJar archive)
-    }
-
-    private infix fun Pack.toJar(archive: String): Jar = project.tasks.maybeCreate(archive + "Jar", Jar::class.java).apply {
-        from(sourceSet.output)
-    }
-
-    private inner class Archives: Iterable<String> {
-        private val archives = HashSet<String>()
-        private val extension: NamedDomainObjectContainer<Pack>? get() = project.extensions["describe"]
-        private var listened: Boolean = false
-
-        override fun iterator(): Iterator<String> {
-            if (!listened) extension?.listen()
-            return archives.iterator()
+    private fun Project.publishPacks() = publish { publications ->
+        whenObjectAdded {
+            it publishTo publications
         }
+    }
 
-        private fun NamedDomainObjectContainer<Pack>.listen() {
-            listened = true
-            whenObjectAdded { pack ->
-                val archive = pack.toArchive
-                if(archive != null){
-                    archives += archive
-                }
+    private fun Project.publishAll() = publish { publications ->
+        forEach {
+            it publishTo publications
+        }
+    }
+
+    private fun Project.publish(action: NamedDomainObjectContainer<Pack>.(PublicationContainer) -> Unit) {
+        val publishing: PublishingExtension = extOrWarn("publishing") ?: return
+        val packs: NamedDomainObjectContainer<Pack> = extOrWarn("describe") ?: return
+
+        action(packs, publishing.publications)
+    }
+
+    infix fun publish(pack: Pack) {
+        val publishing: PublishingExtension = pack.project.extOrWarn("publishing") ?: return
+        pack publishTo publishing.publications
+    }
+
+    private infix fun Pack.publishTo(publications: PublicationContainer) {
+        val archive = archive ?: return
+        if (archive !in archives)
+            publications.maybeCreate(archive, MavenPublication::class.java).apply {
+                archives += archive
+                artifactId = archive
+
+                groupId = project.group.toString()
+                version = project.version.toString()
+
+                publish(this)
             }
-        }
     }
+
+    private fun Pack.publish(publication: MavenPublication) {
+        publication.artifact(artifact)
+    }
+
+    private val Pack.artifact: PublishArtifact get() = project
+            .artifacts
+            .add("archives", jar)
+
+    private val Pack.jar: Jar get() = project
+            .tasks
+            .maybeCreate(archive, Jar::class.java)
+            .apply { from(sourceSet.output) }
+
 }

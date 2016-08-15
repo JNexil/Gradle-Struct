@@ -4,6 +4,7 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.file.*
 import org.gradle.api.tasks.*
+import su.jfdev.gradle.struct.publish.*
 import su.jfdev.gradle.struct.util.*
 
 data class Pack(val project: Project, val name: String) {
@@ -43,7 +44,9 @@ data class Pack(val project: Project, val name: String) {
         get() = sourceSet.getClasspath()
         set(value) = sourceSet.setClasspath(value)
 
-    fun archive(name: String): Pack = apply {
+    fun publish(name: String): Pack = apply {
         archive = name
+        val publish = project.plugins.findPlugin(PublishPlugin::class.java) ?: return@apply
+        publish publish this
     }
 }
