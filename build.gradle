@@ -14,7 +14,7 @@ plugins {
 
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group 'su.jfdev.gradle.struct'
 version '1.4.5'
@@ -34,12 +34,14 @@ dependencies {
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.5.2'
 }
 
-install {
-    repositories {
-        mavenInstaller {
-            pom.groupId = group
-            pom.version = version
-            pom.artifactId = "gradle-struct"
+publishing {
+    publications {
+        general(MavenPublication){
+            groupId = group
+            version = project.version
+            artifactId = "gradle-struct"
+
+            from components.java
         }
     }
 }
@@ -47,7 +49,7 @@ install {
 bintray {
     user = property("binuser")
     key = property("binkey")
-    configurations = ['archives']
+    publications = ['general']
     pkg {
         repo = 'maven'
         name = 'Gradle-Struct'
