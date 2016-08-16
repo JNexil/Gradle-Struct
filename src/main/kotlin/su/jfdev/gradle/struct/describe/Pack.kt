@@ -9,8 +9,6 @@ import su.jfdev.gradle.struct.util.*
 data class Pack(val project: Project, val name: String) {
 
     var includeResources: Boolean = false
-    var archive: String? = null
-
     val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
 
     infix fun extend(pack: Pack): Pack = eachScope {
