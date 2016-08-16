@@ -8,6 +8,7 @@ import su.jfdev.gradle.struct.util.*
 
 data class Pack(val project: Project, val name: String) {
 
+    var archive: String = joinPath()
     var includeResources: Boolean = false
     val sourceSet: SourceSet = project.sourceSets.maybeCreate(name)
 

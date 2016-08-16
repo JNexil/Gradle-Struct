@@ -3,6 +3,7 @@ package su.jfdev.gradle.struct.util
 import org.gradle.api.*
 import org.gradle.api.plugins.*
 import su.jfdev.gradle.struct.describe.*
+import java.util.*
 
 operator fun Project.get(name: String) = Pack(this, name)
 
@@ -14,7 +15,20 @@ fun Project.warnException(name: String) = logger.warn("Not found extension $name
 
 inline operator fun <reified T> ExtensionContainer.get(name: String) = findByName(name) as? T
 
-inline fun <reified T: Any> Project.onlyWith(name: String, action: T.() -> Unit) {
-    val value: T = extensions[name] ?: return
-    value.action()
+inline fun <reified T: Any> Project.addContainer(name: String, crossinline make: (String) -> T)
+        = makeContainer(make)
+
+infix inline fun <reified T: Any> Project.makeContainer(crossinline make: (String) -> T): NamedDomainObjectContainer<T>
+        = container(T::class.java) { make(it) }
+
+internal fun Pack.joinPath(): String = LinkedList<String>().run {
+    var current = project
+
+    while (current.rootProject != current){
+        addFirst(current.name)
+        current = current.rootProject
+    }
+
+    add(name)
+    return joinToString(separator = "-")
 }
