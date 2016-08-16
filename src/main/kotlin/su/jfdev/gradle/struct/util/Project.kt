@@ -16,7 +16,7 @@ fun Project.warnException(name: String) = logger.warn("Not found extension $name
 inline operator fun <reified T> ExtensionContainer.get(name: String) = findByName(name) as? T
 
 inline fun <reified T: Any> Project.addContainer(name: String, crossinline make: (String) -> T)
-        = makeContainer(make)
+        = makeContainer(make).apply { extensions.add(name, this) }
 
 infix inline fun <reified T: Any> Project.makeContainer(crossinline make: (String) -> T): NamedDomainObjectContainer<T>
         = container(T::class.java) { make(it) }
