@@ -49,30 +49,30 @@ class PublishPlugin: Plugin<Project> {
                 version = project.version.toString()
             }
         }
-        publication publish artifactBy(name) {
+        fun publish(name: String, configure: Jar.() -> Unit) = publication publish artifactBy(name, configure)
+        publish(name) {
             dependsOn(classesTask)
             from(sourceSet.output)
         }
         if (name == "main") {
-            fun withApi(name: String, apply: Pack.(Jar) -> Unit) = publication publish artifactBy(name) {
-                apply(this)
-            }.apply {
-                project["api"].apply(this)
+            publish("sources") {
+                dependsOn(classesTask)
+                from(sourceSet.allSource)
+                project["api"].run {
+                    dependsOn(classesTask)
+                    from(sourceSet.allSource)
+                }
             }
-
-            withApi("sources") {
-                it.dependsOn(classesTask)
-                it.from(sourceSet.allSource)
-            }
-            if (needDokka) withApi("javadoc") {
+            publish("javadoc") {
                 val javadoc = javadocTask
-                it.dependsOn(javadoc)
-                it.from(javadoc.destinationDir)
+                dependsOn(javadoc)
+                from(javadoc.destinationDir)
 
-                it addDokka dokka("J", format = "javadoc")
+                if (needDokka)
+                    addDokka(dokka("J", "javadoc", "api"))
             }
-            if (needDokka) withApi("kdoc") {
-                it addDokka dokka("K", format = "html")
+            if (needDokka) publish("kdoc") {
+                addDokka(dokka("K", "html"))
             }
         }
     }
@@ -99,10 +99,13 @@ class PublishPlugin: Plugin<Project> {
         from(dokka.getOutputDirectoryAsFile())
     }
 
-    private fun Pack.dokka(prefix: String, format: String): DokkaTask = task(prefix + "Doc") {
+    private fun Pack.dokka(prefix: String, format: String, vararg sources: String): DokkaTask = task(prefix + "Doc") {
+        val sourceSets = project.sourceSets
         outputFormat = format
-        sourceDirs = sourceSet.allJava
         outputDirectory = File(project.buildDir, name).path
+        sourceDirs = sources.flatMap {
+            sourceSets.getByName(it).allSource
+        }
     }
 
 
