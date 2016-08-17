@@ -14,6 +14,13 @@ import java.util.*
 
 class PublishPlugin: Plugin<Project> {
 
+    private val needDokka = try {
+        Class.forName("org.jetbrains.dokka.gradle.DokkaTask")
+        true
+    } catch (e: Throwable) {
+        false
+    }
+
     val archives: MutableList<String> = ArrayList()
 
     override fun apply(project: Project) {
@@ -57,22 +64,17 @@ class PublishPlugin: Plugin<Project> {
                 it.dependsOn(classesTask)
                 it.from(sourceSet.allSource)
             }
-            withApi("javadoc") {
+            if (needDokka) withApi("javadoc") {
                 val javadoc = javadocTask
                 it.dependsOn(javadoc)
                 it.from(javadoc.destinationDir)
 
                 it addDokka dokka("J", format = "javadoc")
             }
-            withApi("kdoc") {
+            if (needDokka) withApi("kdoc") {
                 it addDokka dokka("K", format = "html")
             }
         }
-    }
-
-    private infix fun Jar.addDokka(dokka: DokkaTask) {
-        dependsOn(dokka)
-        from(dokka.getOutputDirectoryAsFile())
     }
 
     private infix fun MavenPublication.publish(any: Any) = artifact(any)
@@ -83,12 +85,18 @@ class PublishPlugin: Plugin<Project> {
         group = "build"
         project.artifacts.add("archives", this)
     }
-
     private val Pack.classesTask: Task get() = project.tasks
             .getByName(sourceSet.classesTaskName)
 
+
     private val Pack.javadocTask: Javadoc get() = task("Javadoc") {
         source(sourceSet.allJava)
+    }
+
+
+    private infix fun Jar.addDokka(dokka: DokkaTask) {
+        dependsOn(dokka)
+        from(dokka.getOutputDirectoryAsFile())
     }
 
     private fun Pack.dokka(prefix: String, format: String): DokkaTask = task(prefix + "Doc") {
