@@ -21,14 +21,12 @@ inline fun <reified T: Any> Project.addContainer(name: String, crossinline make:
 infix inline fun <reified T: Any> Project.makeContainer(crossinline make: (String) -> T): NamedDomainObjectContainer<T>
         = container(T::class.java) { make(it) }
 
-internal fun Pack.joinPath(): String = LinkedList<String>().run {
-    var current = project
+internal val Pack.path: Collection<String>
+    get() = LinkedList<String>().apply {
+        var current = project
 
-    while (current.rootProject != current){
-        addFirst(current.name)
-        current = current.rootProject
+        while (current.rootProject != current) {
+            addFirst(current.name)
+            current = current.rootProject
+        }
     }
-
-    add(name)
-    return joinToString(separator = "-")
-}

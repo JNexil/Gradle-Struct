@@ -26,6 +26,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.dokka:dokka-gradle-plugin:0.9.9"
 
     testCompile 'junit:junit:4.12',
             "com.nhaarman:mockito-kotlin:0.5.1",

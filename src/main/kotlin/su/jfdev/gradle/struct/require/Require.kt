@@ -24,9 +24,7 @@ class Require(val receiver: Project, val target: Requirement): Closure<Any>(Unit
         for (name in names) test(name)
     }
 
-    fun test(name: String) {
-        sources(name, "test")
-    }
+    fun test(name: String) = runtime(name, "test")
 
     @over fun compile(name: String, to: String = name) = source(name, to, COMPILE)
 
