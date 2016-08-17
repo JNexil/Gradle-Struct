@@ -17,7 +17,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
 group 'su.jfdev.gradle.struct'
-version '1.4.5'
+version '1.5.0'
 
 repositories {
     jcenter()
@@ -59,7 +59,7 @@ bintray {
         vcsUrl = 'https://github.com/Jamefrus/Gradle-Struct.git'
         version {
             name = project.version
-            desc = 'Publish improved'
+            desc = 'Sources, Docs, Packs publishing'
             released = new Date()
             vcsTag = project.version
         }
