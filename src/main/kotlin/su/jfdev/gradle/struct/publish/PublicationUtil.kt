@@ -16,4 +16,4 @@ val Pack.publication: MavenPublication get() = publications
 
 val Pack.publications: PublicationContainer get() = publishing.publications
 val Pack.publishing: PublishingExtension get() = project.extensions.getByType(PublishingExtension::class.java)
-val Pack.camelPath: String get() = path.joinToString(transform = String::capitalize)
+val Pack.camelPath: String get() = path.joinToString(transform = String::capitalize, separator = "")
