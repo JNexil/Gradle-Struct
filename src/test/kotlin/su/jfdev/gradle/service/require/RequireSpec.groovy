@@ -3,6 +3,7 @@ package su.jfdev.gradle.service.require
 import org.gradle.api.Project
 import spock.lang.Unroll
 import su.jfdev.gradle.service.spec.PluginSpec
+import su.jfdev.gradle.struct.describe.Scope
 
 class RequireSpec extends PluginSpec {
     public static final ALL = ["api", "main", "impl", "spec", "test"]
@@ -38,12 +39,27 @@ class RequireSpec extends PluginSpec {
     }
 
     @Unroll
-    def "should when add template, add `#source` to `#to`"() {
+    def "should when add template, add `#source` to `#to` by compile"() {
         given:
         receiver.require.from(":target").template "impl"
 
         expect:
-        assertRequired(to, source)
+        assertRequired(Scope.COMPILE, to, source)
+
+        where:
+        source | to
+        "api"  | "api"
+        "main" | "main"
+    }
+
+
+    @Unroll
+    def "should when add template, add `#source` to `#to` by runtime"() {
+        given:
+        receiver.require.from(":target").template "impl"
+
+        expect:
+        assertRequired(Scope.RUNTIME, to, source)
 
         where:
         source | to
