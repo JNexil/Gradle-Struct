@@ -14,7 +14,7 @@ data class PublicationBuilder(val owner: Pack) {
     }
 
     inline fun publish(name: String, block: Jar.() -> Unit) {
-        val artifact = owner.taskJar(name + "Jar", block)
+        val artifact = owner.taskJar(name, block)
         publication.artifact(artifact)
     }
 
