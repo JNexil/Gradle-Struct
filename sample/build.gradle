@@ -2,7 +2,7 @@ group 'su.jfdev.gradle.struct'
 version System.currentTimeSeconds()
 
 buildscript {
-    def rootFile = new File(rootDir, "build/libs").listFiles().toList()
+    def rootFile = new File(rootDir, "build/libs").listFiles()?.toList() ?: []
     ext.enabledSample = !rootFile.empty
     dependencies {
         classpath files(rootFile)
