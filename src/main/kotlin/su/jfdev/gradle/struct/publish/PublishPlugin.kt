@@ -3,6 +3,7 @@ package su.jfdev.gradle.struct.publish
 import org.gradle.api.*
 import org.gradle.api.publish.maven.plugins.*
 import su.jfdev.gradle.struct.describe.*
+import su.jfdev.gradle.struct.publish.xml.*
 import su.jfdev.gradle.struct.util.*
 import java.io.*
 import java.util.*
@@ -26,6 +27,7 @@ class PublishPlugin: Plugin<Project> {
     }
 
     fun PublicationBuilder.publish() {
+        dependencies@ publication.improveDependencies(owner)
         output@ publish(owner.name) {
             owner {
                 from(sourceSet.output)
@@ -68,3 +70,4 @@ class PublishPlugin: Plugin<Project> {
         }
     }
 }
+

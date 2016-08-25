@@ -2,10 +2,13 @@ package su.jfdev.gradle.struct.describe
 
 import org.gradle.api.artifacts.*
 import org.gradle.api.internal.artifacts.*
+import su.jfdev.gradle.struct.util.*
 
 data class PackDependency(val scope: Scope, val pack: Pack): Dependency, ResolvableDependency {
 
-    override fun getName(): String = pack.project.name
+    private val name = pack.path.joinToString(separator = "-")
+
+    override fun getName() = name
     override fun getGroup() = pack.project.group.toString()
     override fun getVersion() = pack.project.version.toString()
 
