@@ -6,7 +6,7 @@ import su.jfdev.gradle.struct.describe.*
 
 val Pack.classesTask: Task get() = project.tasks.getByName(sourceSet.classesTaskName)
 
-inline fun Pack.taskJar(name: String, configure: Jar.() -> Unit): Jar = task(name + "Jar") {
+inline fun Pack.taskJar(name: String, configure: Jar.() -> Unit): Jar = task(name) {
     extension = "jar"
     group = "build"
     configure()
