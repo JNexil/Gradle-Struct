@@ -29,4 +29,6 @@ internal val Pack.path: Collection<String>
             addFirst(current.name)
             current = current.rootProject
         }
+
+        addLast(name)
     }
