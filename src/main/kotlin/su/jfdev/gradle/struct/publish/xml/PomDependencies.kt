@@ -4,7 +4,7 @@ import org.gradle.api.publish.maven.*
 import su.jfdev.gradle.struct.describe.*
 
 internal fun MavenPublication.improveDependencies(pack: Pack) = pom.withXml {
-    NodeHelper(it.asNode()).addDependencies(pack)
+    NodeHelper(it).addDependencies(pack)
 }
 
 private fun NodeHelper.addDependencies(pack: Pack) {
