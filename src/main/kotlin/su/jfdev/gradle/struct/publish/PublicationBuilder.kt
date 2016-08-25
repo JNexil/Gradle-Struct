@@ -18,6 +18,10 @@ data class PublicationBuilder(val owner: Pack) {
         publication.artifact(artifact)
     }
 
+    inline fun owner(block: Pack.() -> Unit) {
+        owner.block()
+    }
+
     inline fun with(vararg packs: String, block: Pack.() -> Unit) {
         owner.block(); by(packs = *packs, block = block)
     }

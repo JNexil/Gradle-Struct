@@ -27,7 +27,7 @@ class PublishPlugin: Plugin<Project> {
 
     fun PublicationBuilder.publish() {
         output@ publish(owner.name) {
-            with {
+            owner {
                 from(sourceSet.output)
                 dependsOn(classesTask)
             }
