@@ -1,5 +1,5 @@
 group 'su.jfdev.gradle.struct'
-version '1.4.5'
+version System.currentTimeSeconds()
 
 buildscript {
     def rootFile = new File(rootDir, "build/libs").listFiles().toList()
@@ -15,5 +15,9 @@ if (enabledSample) {
     publish {
         api
         main
+    }
+
+    dependencies {
+        apiCompile "com.nhaarman:mockito-kotlin:0.5.1"
     }
 }
