@@ -1,0 +1,19 @@
+group 'su.jfdev.gradle.struct'
+version '1.4.5'
+
+buildscript {
+    def rootFile = new File(rootDir, "build/libs").listFiles().toList()
+    ext.enabledSample = !rootFile.empty
+    dependencies {
+        classpath files(rootFile)
+    }
+}
+if (enabledSample) {
+    apply plugin: 'java'
+    apply plugin: 'su.jfdev.struct'
+
+    publish {
+        api
+        main
+    }
+}
