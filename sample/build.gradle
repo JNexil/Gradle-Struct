@@ -17,7 +17,11 @@ if (enabledSample) {
         main.full
     }
 
+    repositories {
+        jcenter()
+    }
+
     dependencies {
-        apiCompile "com.nhaarman:mockito-kotlin:0.5.1"
+        apiCompile "com.google.code.gson:gson:2.5"
     }
 }
