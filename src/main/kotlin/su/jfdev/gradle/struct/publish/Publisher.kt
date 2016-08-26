@@ -7,6 +7,7 @@ import su.jfdev.gradle.struct.publish.xml.*
 import java.io.*
 
 data class Publisher(val owner: Pack) {
+    val name: String get() = owner.name
 
     val publication: MavenPublication = owner.publication.apply {
         owner.project.plugins

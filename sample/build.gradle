@@ -13,8 +13,8 @@ if (enabledSample) {
     apply plugin: 'su.jfdev.struct'
 
     publish {
-        api
-        main
+        api.full
+        main.full
     }
 
     dependencies {
