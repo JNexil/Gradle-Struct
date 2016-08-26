@@ -6,13 +6,16 @@ import su.jfdev.gradle.struct.describe.*
 
 val Pack.classesTask: Task get() = project.tasks.getByName(sourceSet.classesTaskName)
 
-inline fun Pack.taskJar(name: String, configure: Jar.() -> Unit): Jar = task(name + "Jar") {
-    if(name != this@taskJar.name) classifier = name
+internal inline fun Pack.taskJar(suffix: String?, configure: Jar.() -> Unit): Jar = task(suffix.jarName) {
+    baseName = linePath
+    classifier = suffix
     extension = "jar"
     group = "build"
     configure()
     project.artifacts.add("archives", this)
 }
+
+private val String?.jarName: String get() = (this ?: "classes") + "Jar"
 
 inline fun <reified T: Task> Pack.task(suffix: String, configure: T.() -> Unit): T {
     val name = sourceSet.getTaskName(null, suffix)
